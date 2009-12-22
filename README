@@ -67,3 +67,10 @@ application=myWebApp(args_goes_here)
 
 see test.wsgi for details
 
+Google App Engine Deploying 
+============================
+
+Just use the function run_wsgi_app(application)
+for details visit http://code.google.com/appengine/docs/python/tools/webapp/utilmodule.html#run_wsgi_app
+
+
