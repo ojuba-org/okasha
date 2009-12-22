@@ -1,0 +1,5 @@
+  * use ObjectsCache to cache templates
+  * use ObjectsCache to cache static files
+  * add a function argument ObjectsCache that skips adding to cache if True
+  * implement fileSizeGreaterThan() and use it
+

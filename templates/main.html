@@ -1,0 +1,50 @@
+<!DOCTYPE html
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title>%(title)s</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<script type="text/javascript" src="%(script)s/_files/jquery.min.js"></script>
+</head>
+<body style="background:url('%(script)s/_files/logo.png') top right no-repeat;">
+<h1>welcome to okasha sample web application</h1>
+<p>we are running %(version)s in %(mode)s</p>
+random:[<span id="rnd"></span>] - time:[<span id="t"></span>]
+<button id="btn1">click here to generate new one</button><br/>
+<form name="myForm" onSubmit="return false">
+<input id="typedTxt" value="abc-def" />
+<button id="btn2">click here</button>
+</form>
+<div>the uppser case version of your input is [<span id="u"></span>]</div>
+<div>we can split your input by - to be
+<ul id="s">
+</ul>
+</div>
+<script type="text/javascript">
+$().ready(function() {
+  $('#btn1').click( function() {
+      $.getJSON("%(script)s/ajaxGet", {}, function(d){
+        $("#rnd").text(d.rnd);
+        $("#t").text(d.time);
+      });
+  });
+  $('#btn2').click( function() {
+      $.getJSON("%(script)s/ajaxToUpper", {text:document.myForm.typedTxt.value},function(d){
+        $("#u").text(d);
+      });
+
+      $.getJSON("%(script)s/ajaxSplit", {by:'-',text:document.myForm.typedTxt.value},function(d){
+        var ul=$("#s");
+        ul.html('');
+        for (var i in d){
+          var li=$("<li/>").html(d[i]).appendTo(ul);
+        }
+
+      });
+
+    });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,69 @@
+okasha WSGI web fromwork
+===========================
+
+this is almost do-nothing web framewrok
+
+the only needed file is okasha and the rest is a sample project for demonstration
+
+The Name
+==========
+
+Okasha (or Okkasha with double stressed) means something that interconnected,
+and it also means the spider or its web.
+
+We named our project after one of the companions of prophet Muhammad (peace be upon him). His full name was Okasha ibn Muhsun ‫عكاشة بن محصن
+
+Features
+=========
+  * WSGI-enabled ie. can be used with mod_wsgi, mod_python, fast cgi, cgi, with paste or even without even a server
+  * light weight
+  * can be tuned to be suitable for desktop apps or public web servers
+  * no extra dependencies
+  * very simple
+
+The Concept
+============
+
+subclass baseWebApp and each non-private method will serve a page with same name,
+
+you may use @expose decorator to pass the returned value to some template method,
+the two most common template methods are
+  * json.dumps (from json module) which will format the returned python object as a JSON javascript string.
+  * percentTemplate - the returned dictionary will by the arguments to format the template files
+
+and it also allow you to serve static files directly or redirect it to where it can be server by other means
+
+using the above ways one can create very effective web applications,
+just serve a static main HTML page (or use templates)
+then do the rest with AJAX/JSON 
+
+What it is not
+===============
+if your application need the following things
+then consider another solution:
+	  * download/uploading large files (use redirectBaseUrls to make apache serve large static files)
+  * cookies (to be done soon, currently you should do it in JS)
+
+Testing
+========
+you can test it by using python-paste
+
+for example to test the demonstration sample
+just run test.py then open your browser on the reported site
+
+Apache Deploying 
+=================
+install mod_wsgi and the next line to your httpd configuration
+
+WSGIScriptAlias /myapp /path/to/myapp.wsgi
+
+where /myapp is how your application is accessed (http://localhost/myapp)
+
+and where myapp.wsgi is a python file that just defines "application"
+for example it could be something like this
+
+from mymodule import myWebApp
+application=myWebApp(args_goes_here)
+
+see test.wsgi for details
+
