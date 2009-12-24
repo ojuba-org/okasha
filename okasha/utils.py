@@ -42,10 +42,13 @@ class ObjectsCacheObject:
     return cmp(self.atime,b)
 
 class ObjectsCache:
-  def __init__(self, maxTime=3600,maxCount=100,minCount=10):
+  def __init__(self, minCount=10, maxCount=100, maxTime=3600):
     """
-    maxTime is time to live in seconds, all objects older than this will be removed when free is called
+    minCount is the minimum number of cached objects below which no cached object will be freed, use 0 to set no lower limit
+    maxCount is the maximum number of cached objects above which no cached object will be kept, use 0 to set no upper limit
+    maxTime is positive time to live in seconds, all objects older than this will be removed when free is called, use 0 to discard time checking
     
+    example: setting all limits to 0 will keep all cached objects no matter how many or for how long
     """
     self.maxTime=maxTime
     self.maxCount=maxCount
@@ -71,13 +74,15 @@ class ObjectsCache:
     """
     free old objects, return number of freed objects
     """
-    c=time.time()-self.maxTime
     l=len(self.objs)
     if self.minCount>0 and l<=self.minCount: return 0
     k=l-self.minCount # max number of objs to remove
     j=max(l-self.maxCount,0) # number of objs to remove
-    i=bisect.bisect(self.objs,c) # number of objs to remove by time
-    i=max(i,j)
+    if self.maxTime>0:
+      c=time.time()-self.maxTime
+      i=bisect.bisect(self.objs,c) # number of objs to remove by time
+      i=max(i,j)
+    else: i=j
     if self.minCount>0: i=min(j,k)
     # can be done by deleting hash elements which has values < -newshift
     for o in self.objs[:i]: del self._hash[o.objId]
