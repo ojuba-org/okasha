@@ -48,7 +48,9 @@ class ObjectsCache:
     maxCount is the maximum number of cached objects above which no cached object will be kept, use 0 to set no upper limit
     maxTime is positive time to live in seconds, all objects older than this will be removed when free is called, use 0 to discard time checking
     
-    example: setting all limits to 0 will keep all cached objects no matter how many or for how long
+    example:
+      setting minCount and maxTime to 0 will keep all cached objects no matter how many or for how long
+      setting maxCount to 0 will disable caching (all objects will be freed when free is called)
     """
     self.maxTime=maxTime
     self.maxCount=maxCount
