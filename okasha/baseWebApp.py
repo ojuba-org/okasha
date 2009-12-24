@@ -105,7 +105,9 @@ class baseWebApp:
     is a prefix is specified in both, redirectBaseUrls will be used.
     """
     self._templatesDir=templatesDir
+    # TODO: add a self._templateFilesCache
     self._staticBaseDir={}
+    # TODO: add a self._staticFilesCache
     self._debug=debug
     for k in staticBaseDir:
       v=staticBaseDir[k]
