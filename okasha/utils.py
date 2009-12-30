@@ -17,6 +17,7 @@ Copyright © 2009, Muayyad Alsadi <alsadi@ojuba.org>
 
 """
 import time
+import bisect
 from itertools import groupby,imap
 # TODO: is this needed ?
 def unixUniq(l):
