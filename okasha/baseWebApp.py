@@ -97,22 +97,25 @@ class baseWebApp:
     'png': 'image/png', 'gif': 'image/gif', 'jpg': 'image/jpeg', 'jpeg': 'image/jpeg'
   }
 
-  def __init__(self, templatesDir, staticBaseDir={}, redirectBaseUrls={}, debug=False):
+  def __init__(self, templatesDir, staticBaseDir={}, redirectBaseUrls={}, logger=None, debug=False):
     """
     staticBaseDirs: a dictionary of prefixes and corresponding directories for serving static content
     redirectBaseUrls: just like staticBaseDirs, but redirect to this BaseUrls instead of surving them
     
-    is a prefix is specified in both, redirectBaseUrls will be used.
+    if a prefix is specified in both, redirectBaseUrls will be used.
+    
+    logger is logging object from python logging module
     """
-    self._templatesDir=templatesDir
+    self._logger=logger
     # TODO: add a self._templateFilesCache
-    self._staticBaseDir={}
+    self._templatesDir=templatesDir
     # TODO: add a self._staticFilesCache
-    self._debug=debug
+    self._staticBaseDir={}
+    self._debug=debug # FIXME: no longer needed
     for k in staticBaseDir:
       v=staticBaseDir[k]
       if not os.path.isdir(v):
-        print "** WARNING: directory [%s] not found, skipping" % v
+        self._logger.warning("WARNING: directory [%s] not found, skipping" % v)
         continue
       self._staticBaseDir[self._tailingSlash(k)]=self._tailingSlash(os.path.abspath(v))
 
@@ -186,8 +189,9 @@ class baseWebApp:
       'environ':environ, 'start_response':start_response,
       'script':script, 'uri':uri, 'tailingSlash':tailingSlash,
       'cookies':cookies, 'q':q,}
-    if self._debug: print "** got ",uri
-    if self._debug: print "** env= ",environ
+    if self._logger:
+      self._logger.info('got uri=[%s]' % uri)
+      self._logger.debug('got env=[%s]' % environ)
     # FIXME: double check when do we need to decode/encode uri
     # check if we need to serve static content
     for k in self._staticBaseDirKeys:
@@ -229,6 +233,7 @@ class baseWebApp:
 
 def percentTemplate(v, **kw):
   # print kw
+  # FIXME: don't print error, just raise things and allow the controller to catch that to handle it and use its own logger
   d=kw['webApp']._templatesDir
   if not os.path.isdir(d): raise fileNotFoundException()
   args=kw.get('templateArgs',[])
@@ -238,8 +243,11 @@ def percentTemplate(v, **kw):
   try: tmp=open(fn,'rt').read().decode('utf-8')
   except IOError: raise fileNotFoundException()
   except: print "**",fn; raise
-  # NOTE: it expects a byte sequence not unicode object
-  return [(tmp % v).encode('utf-8')]
+  # Note: try is used to check for valid template
+  try: s=[(tmp % v).encode('utf-8')] # NOTE: it expects a byte sequence not unicode object
+  except TypeError: raise KeyError
+  except KeyError: raise TypeError
+  return s
 
 if __name__ == '__main__':
     # this requires python-paste package

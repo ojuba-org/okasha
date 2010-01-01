@@ -133,13 +133,22 @@ You query is [<strong>%s</strong>]<br/>
 
 if __name__ == '__main__':
     # this requires python-paste package
+    import logging
     from paste import httpserver
     import sys, os, os.path
+    
+    myLogger=logging.getLogger('MyTestWebApp')
+    h=logging.StreamHandler() # in production use WatchedFileHandler or RotatingFileHandler
+    h.setFormatter(logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s"))
+    myLogger.addHandler(h)
+    myLogger.setLevel(logging.DEBUG) # in production use logging.INFO
+    
     d=os.path.dirname(sys.argv[0])
     app=webApp(
       'SafeMode',
       os.path.join(d,'templates'),
-      staticBaseDir={'/_files/':os.path.join(d,'files')}
+      staticBaseDir={'/_files/':os.path.join(d,'files')},
+      logger=myLogger
     );
     # for options see http://pythonpaste.org/modules/httpserver.html
     httpserver.serve(app, host='127.0.0.1', port='8080')
