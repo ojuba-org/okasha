@@ -64,8 +64,9 @@ class Response:
 class Request:
   def __init__(self, webapp, environ, start_response):
     self.webapp=webapp
-    self.script=environ.get('SCRIPT_NAME','') # the uri of the webapp
     self.environ=environ
+    self.script=environ.get('SCRIPT_NAME','') # the uri of the webapp
+    self.rhost=environ.get('REMOTE_ADDR','')
     self.start_response=start_response
     self.response=Response()
     # FIXME: find a way to simplify decoding query strings into unicode
