@@ -26,9 +26,14 @@ The Concept
 
 subclass baseWebApp and each non-private method will serve a page with same name,
 
+methods receives Request object and the rest of Uri parts (for example if you web app is app, and if the method is view and someone visited http://localhost/app/view/book1/page2 it will receive 'book1','page2' after the request argument)
+
+you may set response code and content type using the response property of Request object 
+
+
 you may use @expose decorator to pass the returned value to some template method,
 the two most common template methods are
-  * json.dumps (from json module) which will format the returned python object as a JSON javascript string.
+  * jsonDumps which will format the returned python object as a JSON javascript string.
   * percentTemplate - the returned dictionary will by the arguments to format the template files
 
 and it also allow you to serve static files directly or redirect it to where it can be server by other means
@@ -41,7 +46,7 @@ What it is not
 ===============
 if your application need the following things
 then consider another solution:
-	  * download/uploading large files (use redirectBaseUrls to make apache serve large static files)
+  * download/uploading large files (use redirectBaseUrls to make apache serve large static files)
   * cookies (to be done soon, currently you should do it in JS)
 
 Testing

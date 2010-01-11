@@ -18,9 +18,11 @@ Copyright © 2009, Muayyad Alsadi <alsadi@ojuba.org>
 """
 
 import sys, os, os.path
+import json # for templates
 import urlparse # for parsing query string
 from cgi import escape # for html escaping
 from Cookie import SimpleCookie # in python 3.0 it's from http.cookies import SimpleCookie
+
 #import urllib # to be used for quote and unquote
 
 # TODO: use c=Cookie.SimpleCookie(string)
@@ -37,10 +39,11 @@ class webAppBaseException(Exception):
   """
   exceptions like fileNotFoundException
   """
-  def __init__(self, stat,uri=None, **kw):
-    self.stat=stat
-    self.uri=uri
+  def __init__(self, code, *args,**kw):
+    self.code=code
+    self.args=args
     self.kw=kw
+    
 
 forbiddenException=lambda *a,**kw: webAppBaseException(403,*a,**kw)
 fileNotFoundException=lambda *a,**kw: webAppBaseException(404,*a,**kw)
@@ -51,41 +54,112 @@ def redirectException(location,*a,**kw):
   e.kw['location']=l
   return e
 
+
+class Response:
+  def __init__(self, code=None,contentType=None,headers=None):
+    self.code=code
+    self.contentType=contentType
+    self.headers=headers
+
+class Request:
+  def __init__(self, webapp, environ, start_response):
+    self.webapp=webapp
+    self.script=environ.get('SCRIPT_NAME','') # the uri of the webapp
+    self.environ=environ
+    self.start_response=start_response
+    self.response=Response()
+    # FIXME: find a way to simplify decoding query strings into unicode
+    qs=environ.get('QUERY_STRING','')
+    self.q=urlparse.parse_qs(qs)
+
+    try: self.cookies=SimpleCookie(environ.get('HTTP_COOKIE','')) # cookies['key'].value
+    except: self.cookies=SimpleCookie('')
+
+    self.uri=environ['PATH_INFO'] # can be / or /view 
+    
+    if type(self.uri)!=unicode:
+      try: self.uri=self.uri.decode('utf8')
+      except UnicodeDecodeError: self.uri=None
+
+    if self.uri.endswith('/'): self.tailingSlash=True
+    else: self.tailingSlash=False
+    if self.uri.startswith('/'): self.uriList=self.uri[1:].split('/')
+    else: self.uriList=self.uri.split('/') # NOTE: this should never happen
+    if self.uriList and self.uriList[-1]=='': self.uriList.pop()
+    
+
 class expose:
-  def __init__(self, template=None, needsKw=False, templateArgs=[],
-    response=200, contentType='text/html; charset=utf-8', headers={},
+  def __init__(self, template=None, templateArgs=[],templateKw={},
+    responseCode=200, contentType='text/html; charset=utf-8', headers={},
     requiresTailingSlash=False
     ):
     """
     a decorator that applies the result of the function to the provided template
     """
-    self.__template=template
-    self.__needsKw=needsKw
-    self.__templateArgs=templateArgs
-    self.__response=webAppResponses.get(response,"%d Unknown" % response)
-    self.__contentType=contentType
-    self.__headers=headers
-    self.__requiresTailingSlash=requiresTailingSlash
+    self._template=template
+    self._templateArgs=templateArgs
+    self._templateKw=templateKw
+    self._response=responseCode
+    self._contentType=contentType
+    self._headers=headers
+    self._requiresTailingSlash=requiresTailingSlash
     
   def __call__(self, func):
-    def wrapper(*args, **kw):
-      if self.__requiresTailingSlash and not kw.get('tailingSlash',False):
-        raise redirectException(kw.get('script','')+kw.get('uri','')+'/')
-      if args and isinstance(args[0], baseWebApp):
-        t_kw=kw.copy()
-        t_kw['webApp']=args[0]
-      t_kw['templateArgs']=self.__templateArgs
-      try:
-        if self.__template:
-          if self.__needsKw: r=self.__template(func(*args, **kw), **t_kw)
-          else: r=self.__template(func(*args, **kw))
-        else: r=func(*args, **kw)
-      except: raise # TODO: handle error unless in debug mode
-      s=kw['start_response']
-      s(self.__response, [('content-type', self.__contentType)]+map(lambda k: (k,self.__headers[k]),self.__headers))
-      if isinstance(r, basestring): return (r,)
+    def wrapper(*args):
+      if not args: raise webAppBaseException(500)
+      elif isinstance(args[0],baseWebApp) and len(args)>=2:
+        rq=args[1]
+      else:
+        rq=args[0]
+      if self._requiresTailingSlash and not rq.tailingSlash:
+        raise redirectException(rq.script+rq.uri+'/')
+      # FIXME: do we need here a try: except:
+      if self._template:
+        r=self._template(rq, func(*args), *self._templateArgs, **self._templateKw)
+      else: r=func(*args)
+
+      # fix response
+      if rq.response.code==None: rq.response.code=self._response
+      if rq.response.contentType==None: rq.response.contentType=self._contentType
+      # FIXME: it should be merged not replaced
+      if rq.response.headers==None: rq.response.headers=self._headers
+      
+      rs=webAppResponses.get(rq.response.code,"%d Unknown code" % rq.response.code)
+      rq.start_response(rs, [('content-type', rq.response.contentType)]+map(lambda k: (k,rq.response.headers[k]),rq.response.headers))
+      if type(r)==unicode: return (r.encode('utf8'),)
+      elif isinstance(r, basestring): return (r,)
       return r
     return wrapper
+
+def percentTemplate(rq, v, bfn=None):
+  # FIXME: don't print error, just raise things and allow the controller to catch that to handle it and use its own logger
+  d=rq.webapp._templatesDir
+  if not os.path.isdir(d): raise fileNotFoundException()
+  if not bfn: bfn='root.html'
+  fn=os.path.join(d, bfn)
+  try: tmp=open(fn,'rt').read().decode('utf-8')
+  except IOError: raise fileNotFoundException()
+  except:
+    rq.webapp._logger.debug('template error fn=[%s]' % fn)
+    raise
+  # Note: try is used to check for valid template
+  #try: s=[(tmp % v).encode('utf-8')] # NOTE: it expects a byte sequence not unicode object
+  try: s=tmp % v # NOTE: it expects a byte sequence not unicode object
+  except TypeError: raise KeyError
+  except KeyError: raise TypeError
+  return s
+
+def jsonDumps(rq, o):
+  if not rq.response.contentType:
+    rq.response.contentType='application/x-javascript; charset=utf-8'
+  return json.dumps(o, ensure_ascii=False)
+
+class fakeLogger:
+  def debug(msg): pass
+  def info(msg): pass
+  def warning(msg): pass
+  def error(msg): pass
+  def critical(msg): pass
 
 class baseWebApp:
   """
@@ -97,7 +171,7 @@ class baseWebApp:
     'png': 'image/png', 'gif': 'image/gif', 'jpg': 'image/jpeg', 'jpeg': 'image/jpeg'
   }
 
-  def __init__(self, templatesDir, staticBaseDir={}, redirectBaseUrls={}, logger=None, debug=False):
+  def __init__(self, templatesDir, staticBaseDir={}, redirectBaseUrls={}, logger=fakeLogger(), debug=False):
     """
     staticBaseDirs: a dictionary of prefixes and corresponding directories for serving static content
     redirectBaseUrls: just like staticBaseDirs, but redirect to this BaseUrls instead of surving them
@@ -133,121 +207,89 @@ class baseWebApp:
     if not s.endswith('/'): return s+'/'
     return s
 
-  def _handelException(self, e, *args, **kw):
-    s='_'+str(e.stat)
+  def _handleException(self, rq, e):
+    s='_'+str(e.code)
     if hasattr(self, s):
-      return getattr(self, s)(e,*args, **kw)
-    return self._genericException(e, *args, **kw)
+      return getattr(self, s)(rq, e)
+    return self._genericException(rq, e)
 
-  def _genericException(self, e, *args, **kw):
-    r=webAppResponses.get(e.stat,"%d Unknown stat" % e.stat)
-    if e.uri: s="exception [%s] happened when visiting [%s]" % (r,e.uri)
-    else: s="exception [%s] happened" % r
-    kw['start_response'](r, [('content-type', 'text/plain')])
+  def _genericException(self, rq, e):
+    rs=webAppResponses.get(e.code,"%d Unknown code" % e.code)
+    if rq.uri: s="exception [%s] happened when visiting [%s]" % (rs,rq.uri)
+    else: s="exception [%s] happened" % rs
+    rq.start_response(rs, [('content-type', 'text/plain')])
     return [s]
 
-  def _302(self, e, *args, **kw):
-    r=webAppResponses[302]
-    kw['start_response'](r, [
+  def _302(self, rq, e):
+    rs=webAppResponses[302]
+    rq.start_response(rs, [
       ('content-type', 'text/plain'),('Location', e.kw['location'])
       ])
     return ("Redirect to "+ e.kw['location'],)
 
 # you may customize exceptions like this
 #  @expose(response=404,contentType='text/plain; charset=utf-8')
-#  def _404(self, e, **kw):
-#    if e.uri==None: return ('File is not found',)
-#    return ('File [%s] is not found' % e.uri,)
+#  def _404(self, rq, e):
+#    if not rq.uri: return ('File was not found',)
+#    return ('File [%s] was not found' % rq.uri,)
 
-  def __serveStatic(self, environ, start_response, uri, fn):
+  def __serveStatic(self, rq, fn):
     """
     internal method to serve static files like png, css,js  ...etc.
     """
-    if not os.path.exists(fn): raise fileNotFoundException(uri)
+    if not os.path.exists(fn): raise fileNotFoundException()
     try: f=open(fn,'rb')
-    except IOError: raise fileNotFoundException(uri)
+    except IOError: raise fileNotFoundException()
 
     ext=fn[fn.rfind('.'):][1:].lower()
-    start_response("200 OK", [('content-type', self._mimeByExtension.get(ext,"application/octet-stream"))])
+    rq.start_response("200 OK", [('content-type', self._mimeByExtension.get(ext,"application/octet-stream"))])
     # NOTE: since the file object is iteratable then no need for returning [r.read()]
     return f
 
   def __call__(self, environ, start_response):
-    script=environ.get('SCRIPT_NAME','') # the uri of the webapp
-    uri=environ['PATH_INFO'] # can be / or /view 
-    try: cookies=SimpleCookie(environ.get('HTTP_COOKIE','')) # cookies['key'].value
-    except: cookies=SimpleCookie('')
-    if type(uri)!=unicode: uri=uri.decode('utf-8')
-    if uri.endswith('/'): tailingSlash=True
-    else: tailingSlash=False
-    if uri.startswith('/'): uriList=uri[1:].split('/')
-    else:  uriList=uri.split('/') # NOTE: this should never happen
-    if uriList and uriList[-1]=='': uriList.pop()
-    qs=environ.get('QUERY_STRING','')
-    q=urlparse.parse_qs(qs)
-    kw={
-      'environ':environ, 'start_response':start_response,
-      'script':script, 'uri':uri, 'tailingSlash':tailingSlash,
-      'cookies':cookies, 'q':q,}
-    if self._logger:
-      self._logger.info('got uri=[%s]' % uri)
-      self._logger.debug('got env=[%s]' % environ)
-    # FIXME: double check when do we need to decode/encode uri
+    rq=Request(self, environ, start_response)
+    if rq.uri==None:
+      # handle malformed uri
+      return self._handleException(rq, webAppBaseException(500))
+    self._logger.info('got uri=[%s]' % rq.uri)
+    self._logger.debug('got env=[%s]' % rq.environ)
     # check if we need to serve static content
     for k in self._staticBaseDirKeys:
-      if uri.startswith(k):
+      if rq.uri.startswith(k):
         # SECURITY CHECK: that filename is really in side base filename ie. no ".." trick
         # NOTE: no need for this check as it seems to be done by paste
         bfn=self._staticBaseDir[k]
-        fn=bfn+uri[len(k):]
+        fn=bfn+rq.uri[len(k):]
         if not os.path.abspath(fn).startswith(bfn):
-          return self._handelException(forbiddenException(),**kw)
-        try: return self.__serveStatic(environ, start_response,
-          uri, fn)
+          return self._handleException(rq, forbiddenException())
+        try: return self.__serveStatic(rq, fn)
         except webAppBaseException as e:
-          return self._handelException(e,**kw)
+          return self._handleException(rq, e)
     # check if we need to serve redirect
     for k in self._redirectBaseUrlsKeys:
-      if uri.startswith(k):
-        u=self._redirectBaseUrls[k]+uri[len(k):]
+      if rq.uri.startswith(k):
+        u=self._redirectBaseUrls[k]+rq.uri[len(k):]
         # FIXME: should we escape Location in start_response
         start_response("302 Temporary Redirect", [('Location',u),('content-type', 'text/html')])
         return [('<html><body><a href="%s">moved</a></body></html>' % escape(u))]
-    if uriList and not uriList[0].startswith('_') and hasattr(self, uriList[0]):
-      f=getattr(self, uriList[0])
-      a=uriList[1:]
+    # pass control to the right method
+    if rq.uriList and not rq.uriList[0].startswith('_') and hasattr(self, rq.uriList[0]):
+      f=getattr(self, rq.uriList[0])
+      a=rq.uriList[1:]
     else:
       f=self._root
-      a=uriList
-    try: r=f(*a, **kw)
+      a=rq.uriList
+    try: r=f(rq, *a)
     except webAppBaseException as e:
-      return self._handelException(e,uri,**kw)
+      return self._handleException(rq, e)
     return r
 
   @expose()
-  def _root(self, *args, **kw):
+  def _root(self, rq, *args):
     """
     called when no suitable method is found and it will be called for / too
     """
     return '''<html><body>You requested [<strong>%s</strong>]</body></html>'''% '/'.join(args)
-
-def percentTemplate(v, **kw):
-  # print kw
-  # FIXME: don't print error, just raise things and allow the controller to catch that to handle it and use its own logger
-  d=kw['webApp']._templatesDir
-  if not os.path.isdir(d): raise fileNotFoundException()
-  args=kw.get('templateArgs',[])
-  if args: bfn=args[0]
-  else: bfn='root.html'
-  fn=os.path.join(d, bfn)
-  try: tmp=open(fn,'rt').read().decode('utf-8')
-  except IOError: raise fileNotFoundException()
-  except: print "**",fn; raise
-  # Note: try is used to check for valid template
-  try: s=[(tmp % v).encode('utf-8')] # NOTE: it expects a byte sequence not unicode object
-  except TypeError: raise KeyError
-  except KeyError: raise TypeError
-  return s
 
 if __name__ == '__main__':
     # this requires python-paste package
