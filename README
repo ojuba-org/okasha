@@ -34,7 +34,8 @@ you may set response code and content type using the response property of Reques
 you may use @expose decorator to pass the returned value to some template method,
 the two most common template methods are
   * jsonDumps which will format the returned python object as a JSON javascript string.
-  * percentTemplate - the returned dictionary will by the arguments to format the template files
+  * percentTemplate - the returned dictionary will be the arguments to format the template files
+  * okasha.kidTemplate - the returned dictionary will be the arguments to format the kid template files
 
 and it also allow you to serve static files directly or redirect it to where it can be server by other means
 
@@ -42,12 +43,21 @@ using the above ways one can create very effective web applications,
 just serve a static main HTML page (or use templates)
 then do the rest with AJAX/JSON 
 
-What it is not
-===============
+What it is not ?
+=================
+
 if your application need the following things
 then consider another solution:
   * download/uploading large files (use redirectBaseUrls to make apache serve large static files)
   * cookies (to be done soon, currently you should do it in JS)
+
+
+Does it depends on jQuery ?
+=============================
+no, I've used it in the sample test.py for convenience,
+you may use any javascript library or write your own
+for example you may send ajax requests as in this tutorial
+  http://www.w3schools.com/Ajax/ajax_browsers.asp
 
 Testing
 ========
