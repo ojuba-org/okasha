@@ -19,6 +19,7 @@ Copyright © 2009, Muayyad Alsadi <alsadi@ojuba.org>
 """
 
 from okasha.baseWebApp import *
+from okasha.kidTemplate import kidTemplate
 
 class webApp(baseWebApp):
   def __init__(self, mode,*args, **kw):
@@ -34,11 +35,11 @@ class webApp(baseWebApp):
     this is an example of sending a verbatim html code as-is
     to test it visit http://localhost:8080/verbatim/some/args/?id=5
     """
-    return """<html><body style="background:url('/_files/logo.gif') top right no-repeat;">
+    return """<html><body style="background:url('%s/_files/logo.gif') top right no-repeat;">
 <h1>welcome to verbatim html from python</h1>
 You requested [<strong>%s</strong>]<br/>
 You query is [<strong>%s</strong>]<br/>
-</body></html>""" % (escape('/'.join(args)), escape(rq.q.__repr__()))
+</body></html>""" % (rq.script, escape('/'.join(args)), escape(rq.q.__repr__()))
 
   @expose(contentType="text/plain; charset=utf-8")
   def text(self, rq, *args):
@@ -83,6 +84,7 @@ You query is [<strong>%s</strong>]<br/>
 <li>same method can be <a href="http://localhost:8080/selective/?type=t">plain</a> or <a href="http://localhost:8080/selective/?type=h">html</a> at run time<li>
 <li><a href="http://localhost:8080/tmp/some/args/?id=5">tmp</a></li>
 <li><a href="http://localhost:8080/tmp/err/raised/?id=5">tmp (not allowed)</a></li>
+<li><a href="http://localhost:8080/kidtmp/some/args/?id=5">kid templates</a></li>
 <li><a href="http://localhost:8080/moved/">redirects</a></li>
 <li><a href="http://localhost:8080/main/">main</a></li>
 </ul>
@@ -101,6 +103,17 @@ You query is [<strong>%s</strong>]<br/>
     return {
       'title':'Okasha simple templates',
       'key1':'val1','key2':'val2','args':'/'.join(args)
+      }
+
+  @expose(kidTemplate,["kidtest.kid"])
+  def kidtmp(self, rq, *args):
+    """
+      http://localhost:8080/kidtmp/some/args/?id=5
+    """
+    return {
+      'h1':'this is how kid templates works',
+      'ls':['apple','banana','orange','tomato'],
+      'args':'/'.join(args)
       }
 
   def moved(self, rq, *args):
