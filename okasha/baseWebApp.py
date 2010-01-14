@@ -17,11 +17,17 @@ Copyright © 2009, Muayyad Alsadi <alsadi@ojuba.org>
 
 """
 
-import sys, os, os.path
+import sys, os, os.path, time, re
 import json # for templates
 import urlparse # for parsing query string
-from cgi import escape # for html escaping
+from cgi import escape, FieldStorage # for html escaping
+from operator import attrgetter # for OkashaFields
 from Cookie import SimpleCookie # in python 3.0 it's from http.cookies import SimpleCookie
+
+try:
+    from cStringIO import StringIO
+except ImportError:
+    from StringIO import StringIO
 
 #import urllib # to be used for quote and unquote
 
@@ -60,6 +66,93 @@ class Response:
     self.code=code
     self.contentType=contentType
     self.headers=headers
+    self.cookies=SimpleCookie('')
+
+  def setCookie(self, key, value, t=None, path=None, domain=None, comment=None):
+    """
+    sets or replace a cookies with key and value, and sets its expire time in seconds since now (if given) 
+    """
+    if isinstance(value,unicode): value=value.encode('utf8')
+    self.cookies[key]=value
+    if t!=None:
+      # TODO: is this the right way of setting both expires and max-age
+      self.cookies[key]['expires']=time.strftime("%a, %d %b %Y %H:%M:%S UTC", time.gmtime(time.time()+t))
+      if t>0: self.cookies[key]['max-age']=t
+    if path!=None:
+      if isinstance(path,unicode): path=path.encode('utf8')
+      self.cookies[key]['path']=path
+    if domain!=None:  self.cookies[key]['domain']=domain
+    if comment!=None:  self.cookies[key]['comment']=comment
+
+ok_tailing_digits=re.compile("^(.*?)(\d*)$",re.U)
+
+class OkashaFields(FieldStorage):
+  def __init__(self, *args, **kw):
+    self._ok_max_files_count=-1
+    FieldStorage.__init__(self, *args, **kw)
+    # TODO: do we need to process tmp files by overriding make_file and delete ?
+  
+  def _suggest_fn(self, fn, suffix_len):
+    if suffix_len==None:
+      i=fn.rfind(".")
+      if i<0: i=len(fn);
+    b=fn[:i]
+    e=fn[i:]
+    l=ok_tailing_digits.findall(b)
+    b=l[0][0]
+    n=l[0][1]
+    if not n: n=2
+    else: n=int(n)+1
+    fn=b+str(n)
+    while(os.path.exists(fn)):
+      n+=1; fn=b+str(n)
+    return fn
+
+  def _save_in(self, i, d, overwrite, name_pattern, suffix_len, max_size):
+    # FIXME: max_size is ignored
+    r=0
+    if name_pattern==None: name_pattern=i.filename
+    fn=os.path.join(d,name_pattern)
+    if os.path.exists(fn):
+      if overwrite==False: return 0
+      elif overwrite==None: fn=self._suggest_fn(name_pattern, suffix_len)
+      else: os.unlink(fn)
+    i.file.seek(0)
+    # FIXME: done at once using memory, maybe we want to do it in chunks
+    # FIXME: implement size-based limits
+    try: open(fn,"wb").write(i.file.read(10)); r=1 # on success
+    finally: i.file.seek(0)
+    return r
+  
+  def save_in(self, key, d, overwrite=False, name_pattern=None,suffix_len=None, max_count=0, max_size=-1):
+    """
+    if overwrite==False then already existing files will be ignored
+    if true they will be overwritten
+    if None then number will be aded or incremented after name_pattern[:-suffix_len] if suffix_len==None then rfind('.') will be used
+    return number of successfully saved files on success
+      0 	key not found
+      -1 	max_count exceeded
+      -2 	max_size exceeded
+      -3	dir does not exist
+      -4	IOError
+    """
+    if not os.path.isdir(d): return -3
+    r=0
+    if key not in self: return r
+    l=self[key]
+
+    if type(l) is type([]):
+      c=len(l)
+      if max_count<=0: max_count=self._ok_max_files_count
+      if max_count>0 and len(l)>max_count: return -1
+      for i in l:
+        try: r+=self._save_in(i, d. overwrite, name_pattern, suffix_len, max_size)
+        except IOError: return -4
+    else:
+      try: r=self._save_in(l, d, overwrite, name_pattern, suffix_len, max_size)
+      except IOError: return -4
+    return r
+
 
 class Request:
   def __init__(self, webapp, environ, start_response):
@@ -71,7 +164,9 @@ class Request:
     self.response=Response()
     # FIXME: find a way to simplify decoding query strings into unicode
     qs=environ.get('QUERY_STRING','')
-    self.q=urlparse.parse_qs(qs)
+    if environ.has_key('wsgi.input'):
+      self.q=OkashaFields(fp=environ['wsgi.input'],environ=environ)
+    else: self.q=OkashaFields(fp=StringIO(''),environ=environ)
 
     try: self.cookies=SimpleCookie(environ.get('HTTP_COOKIE','')) # cookies['key'].value
     except: self.cookies=SimpleCookie('')
@@ -124,9 +219,11 @@ class expose:
       if rq.response.contentType==None: rq.response.contentType=self._contentType
       # FIXME: it should be merged not replaced
       if rq.response.headers==None: rq.response.headers=self._headers
-      
       rs=webAppResponses.get(rq.response.code,"%d Unknown code" % rq.response.code)
-      rq.start_response(rs, [('content-type', rq.response.contentType)]+map(lambda k: (k,rq.response.headers[k]),rq.response.headers))
+      cookies=rq.response.cookies.output(header="")
+      if cookies: h=map(lambda c: ('Set-Cookie',c),cookies.split('\n'))
+      else: h=[]
+      rq.start_response(rs, [('content-type', rq.response.contentType)]+h+map(lambda k: (k,rq.response.headers[k]),rq.response.headers))
       if type(r)==unicode: return (r.encode('utf8'),)
       elif isinstance(r, basestring): return (r,)
       return r
@@ -172,7 +269,7 @@ class baseWebApp:
     'png': 'image/png', 'gif': 'image/gif', 'jpg': 'image/jpeg', 'jpeg': 'image/jpeg'
   }
 
-  def __init__(self, templatesDir, staticBaseDir={}, redirectBaseUrls={}, logger=fakeLogger(), debug=False):
+  def __init__(self, templatesDir, staticBaseDir={}, redirectBaseUrls={}, logger=fakeLogger(), max_files_count=-1, debug=False):
     """
     staticBaseDirs: a dictionary of prefixes and corresponding directories for serving static content
     redirectBaseUrls: just like staticBaseDirs, but redirect to this BaseUrls instead of surving them
@@ -180,12 +277,15 @@ class baseWebApp:
     if a prefix is specified in both, redirectBaseUrls will be used.
     
     logger is logging object from python logging module
+    
+    max_files_count is the max number of upload file fields with dupplicated names (-1 unlimited, 1 unique keys)
     """
     self._logger=logger
     # TODO: add a self._templateFilesCache
     self._templatesDir=templatesDir
     # TODO: add a self._staticFilesCache
     self._staticBaseDir={}
+    self._max_files_count=max_files_count
     self._debug=debug # FIXME: no longer needed
     for k in staticBaseDir:
       v=staticBaseDir[k]
@@ -254,6 +354,7 @@ class baseWebApp:
       return self._handleException(rq, webAppBaseException(500))
     self._logger.info('got uri=[%s]' % rq.uri)
     self._logger.debug('got env=[%s]' % rq.environ)
+    rq.q._ok_max_files_count=self._max_files_count
     # check if we need to serve static content
     for k in self._staticBaseDirKeys:
       if rq.uri.startswith(k):

@@ -60,7 +60,7 @@ You query is [%s]
       http://localhost:8080/selective/?type=h
       http://localhost:8080/selective/?type=t
     """
-    if rq.q.get('type',[''])[-1]=='t':
+    if rq.q.getfirst('type','')=='t':
       rq.response.contentType="text/plain; charset=utf-8"
     return """welcome to selective plain or html text from python, <b>is this bold</b>
 You requested [%s]
@@ -75,20 +75,22 @@ You query is [%s]
     """
     return """<html><body>
 <h1>welcome to Okasha</h1>
-You requested [<strong>%s</strong>] which is not handled by any method<br/>
-You query is [<strong>%s</strong>]<br/>
+You requested [<strong>%(u)s</strong>] which is not handled by any method<br/>
+You query is [<strong>%(q)s</strong>]<br/>
 <h2>try out the following</h2>
 <ul>
-<li><a href="http://localhost:8080/text">plain text</a></li>
-<li><a href="http://localhost:8080/verbatim/some/args/?id=5">verbatim html</a></li>
-<li>same method can be <a href="http://localhost:8080/selective/?type=t">plain</a> or <a href="http://localhost:8080/selective/?type=h">html</a> at run time<li>
-<li><a href="http://localhost:8080/tmp/some/args/?id=5">tmp</a></li>
-<li><a href="http://localhost:8080/tmp/err/raised/?id=5">tmp (not allowed)</a></li>
-<li><a href="http://localhost:8080/kidtmp/some/args/?id=5">kid templates</a></li>
-<li><a href="http://localhost:8080/moved/">redirects</a></li>
-<li><a href="http://localhost:8080/main/">main</a></li>
+<li><a href="%(script)s/text">plain text</a></li>
+<li><a href="%(script)s/verbatim/some/args/?id=5">verbatim html</a></li>
+<li>same method can be <a href="%(script)s/selective/?type=t">plain</a> or <a href="%(script)s/selective/?type=h">html</a> at run time<li>
+<li><a href="%(script)s/tmp/some/args/?id=5">tmp</a></li>
+<li><a href="%(script)s/tmp/err/raised/?id=5">tmp (not allowed)</a></li>
+<li><a href="%(script)s/kidtmp/some/args/?id=5">kid templates</a></li>
+<li><a href="%(script)s/cookies/">cookies</a></li>
+<li><a href="%(script)s/moved/">redirects</a></li>
+<li><a href="%(script)s/main/">main</a></li>
+<li><a href="%(script)s/upload/">upload a file to /tmp/</a></li>
 </ul>
-</body></html>""" % (escape('/'.join(args)), escape(rq.q.__repr__()))
+</body></html>""" % {'script':rq.script,'u':escape('/'.join(args)), 'q':escape(rq.q.__repr__())}
 
   @expose(percentTemplate,["tmp.html"])
   def tmp(self, rq, *args):
@@ -115,6 +117,32 @@ You query is [<strong>%s</strong>]<br/>
       'ls':['apple','banana','orange','tomato'],
       'args':'/'.join(args)
       }
+
+  @expose(percentTemplate,["cookies.html"])
+  def cookies(self, rq, *args):
+    """
+      http://localhost:8080/cookies/
+    """
+    if rq.q.has_key('color'):
+      c=rq.q.getfirst('color','')
+      rq.response.setCookie('color',c, 60*5) # expires in 5 minutes
+      return {'color':c}
+    if rq.cookies.has_key('color'):
+      return {'color':rq.cookies['color'].value.decode('utf8')}
+    return {'color':''}
+
+  @expose(percentTemplate,["upload.html"])
+  def upload(self, rq, *args):
+    """
+      http://localhost:8080/upload/
+    """
+    color=rq.q.getfirst('color','')
+    b=rq.q.getfirst('b','')
+    if rq.q.has_key('file1'):
+      f=rq.q.getfirst('file1','') # get it as string
+      rq.q.save_in('file1','/tmp/')
+    else: f=""
+    return {'color':color,'f':f,'b':b,'script':rq.script}
 
   def moved(self, rq, *args):
     """
@@ -151,7 +179,7 @@ You query is [<strong>%s</strong>]<br/>
     this is an example of using ajax/json
     to test it visit http://localhost:8080/ajaxToUpper?text="LowerCaseMe"
     """
-    t=rq.q.get('text',[''])[-1]
+    t=rq.q.getfirst('text','')
     return t.upper()
 
   @expose(jsonDumps)
@@ -160,8 +188,8 @@ You query is [<strong>%s</strong>]<br/>
     this is an example of using ajax/json
     to test it visit http://localhost:8080/ajaxSplit?text=12-345-678&by=-
     """
-    t=rq.q.get('text',[''])[-1]
-    d=rq.q.get('by',[''])[-1]
+    t=rq.q.getfirst('text','')
+    d=rq.q.getfirst('by','')
     return t.split(d)
 
 # you may customize exceptions like this
