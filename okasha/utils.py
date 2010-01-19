@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -*- coding: UTF-8 -*-
 """
 
 Copyright © 2009, Muayyad Alsadi <alsadi@ojuba.org>
@@ -16,9 +16,20 @@ Copyright © 2009, Muayyad Alsadi <alsadi@ojuba.org>
     "http://waqf.ojuba.org/license"
 
 """
-import time
+import time, hashlib, random
 import bisect
 from itertools import groupby,imap
+
+def randomblob(m,M):
+  return ''.join(map(lambda i: chr(random.randrange(0,255)), range(random.randrange(m,M))))
+
+
+def safeHash(stringSeed, o):
+  """
+  a URL safe hash, it results a 22 byte long string hash based on md5sum
+  """
+  if isinstance(o,unicode): o=o.encode('utf8')
+  return hashlib.md5(stringSeed+o).digest().encode('base64').replace('+','-').replace('/','_')[:22]
 
 # TODO: is this needed by anything ?
 def unixUniq(l):

@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -*- coding: UTF-8 -*-
 """
 Okasha - a very simple WSGI webframe work
 Copyright © 2009, Muayyad Alsadi <alsadi@ojuba.org>
@@ -62,7 +62,8 @@ def redirectException(location,*a,**kw):
 
 
 class Response:
-  def __init__(self, code=None,contentType=None,headers=None):
+  def __init__(self, rq=None, code=None,contentType=None,headers=None):
+    self.rq=rq
     self.code=code
     self.contentType=contentType
     self.headers=headers
@@ -78,9 +79,9 @@ class Response:
       # TODO: is this the right way of setting both expires and max-age
       self.cookies[key]['expires']=time.strftime("%a, %d %b %Y %H:%M:%S UTC", time.gmtime(time.time()+t))
       if t>0: self.cookies[key]['max-age']=t
-    if path!=None:
-      if isinstance(path,unicode): path=path.encode('utf8')
-      self.cookies[key]['path']=path
+    if path==None: path=self.rq.script+'/'
+    if isinstance(path,unicode): path=path.encode('utf8')
+    self.cookies[key]['path']=path
     if domain!=None:  self.cookies[key]['domain']=domain
     if comment!=None:  self.cookies[key]['comment']=comment
 
@@ -161,7 +162,7 @@ class Request:
     self.script=environ.get('SCRIPT_NAME','') # the uri of the webapp
     self.rhost=environ.get('REMOTE_ADDR','')
     self.start_response=start_response
-    self.response=Response()
+    self.response=Response(self)
     # FIXME: find a way to simplify decoding query strings into unicode
     qs=environ.get('QUERY_STRING','')
     if environ.has_key('wsgi.input'):
@@ -253,11 +254,11 @@ def jsonDumps(rq, o):
   return json.dumps(o, ensure_ascii=False)
 
 class fakeLogger:
-  def debug(msg): pass
-  def info(msg): pass
-  def warning(msg): pass
-  def error(msg): pass
-  def critical(msg): pass
+  def debug(self,msg): pass
+  def info(self, msg): pass
+  def warning(self, msg): pass
+  def error(self, msg): pass
+  def critical(self, msg): pass
 
 class baseWebApp:
   """
@@ -323,9 +324,12 @@ class baseWebApp:
 
   def _302(self, rq, e):
     rs=webAppResponses[302]
+    cookies=rq.response.cookies.output(header="")
+    if cookies: h=map(lambda c: ('Set-Cookie',c),cookies.split('\n'))
+    else: h=[]
     rq.start_response(rs, [
-      ('content-type', 'text/plain'),('Location', e.kw['location'])
-      ])
+      ('content-type', 'text/plain'),
+      ('Location', e.kw['location'])]+h)
     return ("Redirect to "+ e.kw['location'],)
 
 # you may customize exceptions like this

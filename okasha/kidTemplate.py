@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -*- coding: UTF-8 -*-
 """
 Okasha - a very simple WSGI webframe work
 Copyright © 2009, Muayyad Alsadi <alsadi@ojuba.org>
