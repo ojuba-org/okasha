@@ -293,7 +293,7 @@ class baseWebApp:
       if not os.path.isdir(v):
         self._logger.warning("WARNING: directory [%s] not found, skipping" % v)
         continue
-      self._staticBaseDir[self._tailingSlash(k)]=self._tailingSlash(os.path.abspath(v))
+      self._staticBaseDir[self._tailingOsSlash(k)]=self._tailingOsSlash(os.path.abspath(v))
 
     self._redirectBaseUrls={}
     for k in redirectBaseUrls:
@@ -304,6 +304,11 @@ class baseWebApp:
     self._redirectBaseUrlsKeys=self._redirectBaseUrls.keys()
     self._redirectBaseUrlsKeys.sort()
     self._redirectBaseUrlsKeys.reverse()
+
+  def _tailingOsSlash(self, s):
+    if not s.endswith(os.sep): return s+os.sep
+    return s
+
 
   def _tailingSlash(self, s):
     if not s.endswith('/'): return s+'/'
