@@ -293,7 +293,7 @@ class baseWebApp:
       if not os.path.isdir(v):
         self._logger.warning("WARNING: directory [%s] not found, skipping" % v)
         continue
-      self._staticBaseDir[self._tailingOsSlash(k)]=self._tailingOsSlash(os.path.abspath(v))
+      self._staticBaseDir[self._tailingSlash(k)]=self._tailingOsSlash(os.path.abspath(v))
 
     self._redirectBaseUrls={}
     for k in redirectBaseUrls:
@@ -370,7 +370,8 @@ class baseWebApp:
         # SECURITY CHECK: that filename is really in side base filename ie. no ".." trick
         # NOTE: no need for this check as it seems to be done by paste
         bfn=self._staticBaseDir[k]
-        fn=bfn+rq.uri[len(k):]
+        if os.sep!='/': fn=bfn+rq.uri[len(k):].replace('/',os.sep)
+        else: fn=bfn+rq.uri[len(k):]
         if not os.path.abspath(fn).startswith(bfn):
           return self._handleException(rq, forbiddenException())
         try: return self.__serveStatic(rq, fn)
