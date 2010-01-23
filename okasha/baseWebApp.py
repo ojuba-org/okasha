@@ -23,6 +23,7 @@ import urlparse # for parsing query string
 from cgi import escape, FieldStorage # for html escaping
 from operator import attrgetter # for OkashaFields
 from Cookie import SimpleCookie # in python 3.0 it's from http.cookies import SimpleCookie
+from utils import fromFs, toFs
 
 try:
     from cStringIO import StringIO
@@ -180,7 +181,7 @@ class Request:
 
     if self.uri.endswith('/'): self.tailingSlash=True
     else: self.tailingSlash=False
-    if self.uri.startswith('/'): self.uriList=self.uri[1:].split('/')
+    if self.uri.startswith('/'): self.uriList=self.uri[1:].split(u'/')
     else: self.uriList=self.uri.split('/') # NOTE: this should never happen
     if self.uriList and self.uriList[-1]=='': self.uriList.pop()
     
@@ -293,7 +294,7 @@ class baseWebApp:
       if not os.path.isdir(v):
         self._logger.warning("WARNING: directory [%s] not found, skipping" % v)
         continue
-      self._staticBaseDir[self._tailingSlash(k)]=self._tailingOsSlash(os.path.abspath(v))
+      self._staticBaseDir[self._tailingSlash(k)]=self._tailingOsSlash(fromFs(os.path.abspath(toFs(v))))
 
     self._redirectBaseUrls={}
     for k in redirectBaseUrls:

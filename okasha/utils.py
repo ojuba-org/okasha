@@ -16,9 +16,26 @@ Copyright © 2009, Muayyad Alsadi <alsadi@ojuba.org>
     "http://waqf.ojuba.org/license"
 
 """
-import time, hashlib, random
+import sys, time, hashlib, random
 import bisect
 from itertools import groupby,imap
+
+def fromFs(filenameblob):
+  """
+  recives a blob encoded in filesystem encoding and convert it into a unicode object
+  """
+  if type(filenameblob)!=unicode:
+  	return filenameblob.decode(sys.getfilesystemencoding())
+  return filenameblob
+
+def toFs(filename):
+  """
+  recives a unicode object and encode it into filesystem encoding
+  """
+  if type(filename)==unicode:
+  	return filename.encode(sys.getfilesystemencoding())
+  return filename
+
 
 def randomblob(m,M):
   return ''.join(map(lambda i: chr(random.randrange(0,255)), range(random.randrange(m,M))))
