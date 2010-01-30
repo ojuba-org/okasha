@@ -110,6 +110,22 @@ class OkashaFields(FieldStorage):
       n+=1; fn=b+str(n)
     return fn
 
+  def save_as(self, key, fn, overwrite=False):
+    if key not in self: return False
+    l=self[key]
+    if type(l) is type([]):
+      if len(l)==1: i=l[0]
+      else: return False
+    else: i=l
+    if os.path.exists(fn):
+      if overwrite: os.unlink(fn)
+      else: return False
+    i.file.seek(0)
+    try: open(fn,"wb").write(i.file.read())
+    finally: i.file.seek(0)
+    return True
+
+
   def _save_in(self, i, d, overwrite, name_pattern, suffix_len, max_size):
     # FIXME: max_size is ignored
     r=0
@@ -122,12 +138,12 @@ class OkashaFields(FieldStorage):
     i.file.seek(0)
     # FIXME: done at once using memory, maybe we want to do it in chunks
     # FIXME: implement size-based limits
-    try: open(fn,"wb").write(i.file.read(10)); r=1 # on success
+    try: open(fn,"wb").write(i.file.read()); r=1 # on success
     finally: i.file.seek(0)
     return r
   
   def save_in(self, key, d, overwrite=False, name_pattern=None,suffix_len=None, max_count=0, max_size=-1):
-    """
+    """this method handles multiple files having same form name
     if overwrite==False then already existing files will be ignored
     if true they will be overwritten
     if None then number will be aded or incremented after name_pattern[:-suffix_len] if suffix_len==None then rfind('.') will be used
@@ -268,7 +284,8 @@ class baseWebApp:
   _mimeByExtension={
     'html': 'text/html', 'txt': 'text/plain', 'css': 'text/css',
     'js':'application/javascript',
-    'png': 'image/png', 'gif': 'image/gif', 'jpg': 'image/jpeg', 'jpeg': 'image/jpeg'
+    'ico': 'image/x-icon', 'png': 'image/png', 'gif': 'image/gif',
+    'jpg': 'image/jpeg', 'jpeg': 'image/jpeg'
   }
 
   def __init__(self, templatesDir, staticBaseDir={}, redirectBaseUrls={}, logger=fakeLogger(), max_files_count=-1, debug=False):
