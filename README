@@ -5,6 +5,10 @@ this is almost do-nothing web framewrok
 
 the only needed file is okasha and the rest is a sample project for demonstration
 
+see:
+  * http://okasha.ojuba.org/
+  * http://git.ojuba.org/cgit/okasha/
+
 The Name
 ==========
 
@@ -34,7 +38,8 @@ you may set response code and content type using the response property of Reques
 you may use @expose decorator to pass the returned value to some template method,
 the two most common template methods are
   * jsonDumps which will format the returned python object as a JSON javascript string.
-  * percentTemplate - the returned dictionary will be the arguments to format the template files
+  * formatTemplate - the returned dictionary or array will be the arguments to format the template files using python str.format
+  * percentTemplate - the returned dictionary will be the arguments to format the template files using python % operator (something like C printf)
   * okasha.kidTemplate - the returned dictionary will be the arguments to format the kid template files
 
 and it also allow you to serve static files directly or redirect it to where it can be server by other means
@@ -42,6 +47,10 @@ and it also allow you to serve static files directly or redirect it to where it 
 using the above ways one can create very effective web applications,
 just serve a static main HTML page (or use templates)
 then do the rest with AJAX/JSON 
+
+Note: formatTemplate is very useful for Html but not when it contains js function because you have to escape { } into {{ }}
+
+Note: percentTemplate is very useful when Html code contains js functions but it's annoying when you got styles with % as you have to escape it into %%
 
 Does it depends on jQuery ?
 =============================

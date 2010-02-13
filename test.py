@@ -84,6 +84,7 @@ You query is [<strong>%(q)s</strong>]<br/>
 <li>same method can be <a href="%(script)s/selective/?type=t">plain</a> or <a href="%(script)s/selective/?type=h">html</a> at run time<li>
 <li><a href="%(script)s/tmp/some/args/?id=5">tmp</a></li>
 <li><a href="%(script)s/tmp/err/raised/?id=5">tmp (not allowed)</a></li>
+<li><a href="%(script)s/format/some/args/?id=5">format</a></li>
 <li><a href="%(script)s/kidtmp/some/args/?id=5">kid templates</a></li>
 <li><a href="%(script)s/cookies/">cookies</a></li>
 <li><a href="%(script)s/moved/">redirects</a></li>
@@ -103,7 +104,21 @@ You query is [<strong>%(q)s</strong>]<br/>
     """
     if args and args[0]=='err': raise forbiddenException()
     return {
-      'title':'Okasha simple templates',
+      'title':'Okasha simple percent templates',
+      'key1':'val1','key2':'val2','args':'/'.join(args)
+      }
+
+  @expose(formatTemplate,["format.html"])
+  def format(self, rq, *args):
+    """
+    this is how you can use simple formatting templates
+    you may return a list and use {0}, {1} ...etc.
+    you may return a dict and use {key1}, {key2}
+    you may also use {key1[0]} if the value is a list or {key1.subkey} ...
+      http://localhost:8080/format/some/args/?id=5
+    """
+    return {
+      'title':'Okasha simple format templates',
       'key1':'val1','key2':'val2','args':'/'.join(args)
       }
 

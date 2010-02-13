@@ -247,8 +247,33 @@ class expose:
       return r
     return wrapper
 
+def formatTemplate(rq, v, bfn=None):
+  """
+  see http://docs.python.org/library/string.html#format-string-syntax
+  """
+  d=rq.webapp._templatesDir
+  if not os.path.isdir(d): raise fileNotFoundException()
+  if not bfn: bfn='root.html'
+  fn=os.path.join(d, bfn)
+  try: tmp=open(fn,'rt').read().decode('utf-8')
+  except IOError: raise fileNotFoundException()
+  except:
+    rq.webapp._logger.debug('template error fn=[%s]' % fn)
+    raise
+  # Note: try is used to check for valid template
+  #try: s=[(tmp % v).encode('utf-8')] # NOTE: it expects a byte sequence not unicode object
+  try:
+    if isinstance(v,dict): s=tmp.format(**v)
+    else: s=tmp.format(*v)
+  except TypeError: raise KeyError
+  except KeyError: raise TypeError
+  # FIXME: use logger for above exceptions
+  return s
+
 def percentTemplate(rq, v, bfn=None):
-  # FIXME: don't print error, just raise things and allow the controller to catch that to handle it and use its own logger
+  """
+  see http://docs.python.org/library/stdtypes.html#string-formatting-operations
+  """
   d=rq.webapp._templatesDir
   if not os.path.isdir(d): raise fileNotFoundException()
   if not bfn: bfn='root.html'
@@ -263,6 +288,7 @@ def percentTemplate(rq, v, bfn=None):
   try: s=tmp % v # NOTE: it expects a byte sequence not unicode object
   except TypeError: raise KeyError
   except KeyError: raise TypeError
+  # FIXME: use logger for above exceptions
   return s
 
 def jsonDumps(rq, o):
