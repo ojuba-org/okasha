@@ -19,6 +19,19 @@ Copyright © 2009, Muayyad Alsadi <alsadi@ojuba.org>
 import sys, time, hashlib, random
 import bisect
 from itertools import groupby,imap
+import re
+
+dD_re=re.compile(ur'(\d+|\D+)')
+
+def stringOrFloat(s):
+  try: return float(s)
+  except ValueError: return s
+
+def strverscmp(a,b):
+  "something like GNU strverscmp"
+  return cmp([stringOrFloat(i) for i in dD_re.findall(a)],
+    [stringOrFloat(i) for i in dD_re.findall(b)])
+
 
 def fromFs(filenameblob):
   """
