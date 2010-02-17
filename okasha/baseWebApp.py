@@ -193,8 +193,10 @@ class Request:
     
     if type(self.uri)!=unicode:
       try: self.uri=self.uri.decode('utf8')
-      except UnicodeDecodeError: self.uri=None
-
+      except UnicodeDecodeError: 
+        webapp._logger.warning('unable to decode uri=[%s]' % self.uri.__repr__())
+        self.uri=None
+    if not self.uri: self.uriList=[]; return
     if self.uri.endswith('/'): self.tailingSlash=True
     else: self.tailingSlash=False
     if self.uri.startswith('/'): self.uriList=self.uri[1:].split(u'/')
