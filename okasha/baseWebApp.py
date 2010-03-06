@@ -23,7 +23,7 @@ import urlparse # for parsing query string
 from cgi import escape, FieldStorage # for html escaping
 from operator import attrgetter # for OkashaFields
 from Cookie import SimpleCookie # in python 3.0 it's from http.cookies import SimpleCookie
-from utils import fromFs, toFs
+from utils import fromFs, toFs, safeHash
 
 try:
     from cStringIO import StringIO
@@ -37,6 +37,7 @@ except ImportError:
 webAppResponses={
     200:'200 OK',
     302:'302 Temporary Redirect',
+    304:'304 Not Modified',
     403:'403 Forbidden',
     404:'404 Not Found',
     500:'500 Internal Server Error'
@@ -52,6 +53,7 @@ class webAppBaseException(Exception):
     self.kw=kw
     
 
+notModifiedException=lambda *a,**kw: webAppBaseException(304,*a,**kw)
 forbiddenException=lambda *a,**kw: webAppBaseException(403,*a,**kw)
 fileNotFoundException=lambda *a,**kw: webAppBaseException(404,*a,**kw)
 def redirectException(location,*a,**kw):
@@ -310,8 +312,8 @@ class baseWebApp:
   The base for our web Application, it's a mini web framework
   """
   _mimeByExtension={
-    'html': 'text/html', 'txt': 'text/plain', 'css': 'text/css',
-    'js':'application/javascript',
+    'html': 'text/html', 'htm': 'text/html', 'txt': 'text/plain',
+    'css': 'text/css', 'js':'application/javascript',
     'ico': 'image/x-icon', 'png': 'image/png', 'gif': 'image/gif',
     'jpg': 'image/jpeg', 'jpeg': 'image/jpeg'
   }
@@ -394,11 +396,19 @@ class baseWebApp:
     internal method to serve static files like png, css,js  ...etc.
     """
     if not os.path.exists(fn): raise fileNotFoundException()
+    try: t=os.stat('files/media/screen.css').st_mtime
+    except IOError: raise fileNotFoundException()
     try: f=open(fn,'rb')
     except IOError: raise fileNotFoundException()
-
+    ts=time.strftime("%a, %d %b %Y %H:%M:%S GMT", time.gmtime(t))
+    et='"'+safeHash("", ts)+'"'
+    if rq.environ.get('If-None-Match','')==et or \
+      rq.environ.get('If-Modified-Since','')==ts:
+      raise notModifiedException()
     ext=fn[fn.rfind('.'):][1:].lower()
-    rq.start_response("200 OK", [('content-type', self._mimeByExtension.get(ext,"application/octet-stream"))])
+    rq.start_response("200 OK", [('content-type', self._mimeByExtension.get(ext,"application/octet-stream")),
+      ('Last-Modified', ts), ('ETag', et)
+    ])
     # NOTE: since the file object is iteratable then no need for returning [r.read()]
     return f
 
