@@ -396,7 +396,7 @@ class baseWebApp:
     internal method to serve static files like png, css,js  ...etc.
     """
     if not os.path.exists(fn): raise fileNotFoundException()
-    try: t=os.stat('files/media/screen.css').st_mtime
+    try: t=os.stat(fn).st_mtime
     except IOError: raise fileNotFoundException()
     try: f=open(fn,'rb')
     except IOError: raise fileNotFoundException()
