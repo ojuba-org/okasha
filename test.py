@@ -20,6 +20,7 @@ Copyright © 2009, Muayyad Alsadi <alsadi@ojuba.org>
 
 from okasha.baseWebApp import *
 from okasha.kidTemplate import kidTemplate
+from okasha.xsltTemplate import xsltTemplate
 
 class webApp(baseWebApp):
   def __init__(self, mode,*args, **kw):
@@ -86,6 +87,8 @@ You query is [<strong>%(q)s</strong>]<br/>
 <li><a href="%(script)s/tmp/err/raised/?id=5">tmp (not allowed)</a></li>
 <li><a href="%(script)s/format/some/args/?id=5">format</a></li>
 <li><a href="%(script)s/kidtmp/some/args/?id=5">kid templates</a></li>
+<li><a href="%(script)s/xslt/some/args/?id=5">xslt templates</a></li>
+<li><a href="%(script)s/docbook/some/args/?id=5">docbook templates</a></li>
 <li><a href="%(script)s/cookies/">cookies</a></li>
 <li><a href="%(script)s/moved/">redirects</a></li>
 <li><a href="%(script)s/main/">main</a></li>
@@ -132,6 +135,44 @@ You query is [<strong>%(q)s</strong>]<br/>
       'ls':['apple','banana','orange','tomato'],
       'args':'/'.join(args)
       }
+
+  @expose(xsltTemplate,["test.xsl"], contentType="text/xml; charset=utf-8")
+  def xslt(self, rq, *args):
+    """
+      http://localhost:8080/xslt/some/args/?id=5
+    """
+    return u'''<a><b>Text</b></a>'''
+
+  @expose(xsltTemplate,["docbook.xsl"])
+  def docbook(self, rq, *args):
+    """
+      http://localhost:8080/docbook/some/args/?id=5
+    """
+    return u'''\
+<article id="myarticle" lang="ar_JO">
+  <section id="mysection1">
+    <title>عنوان الفصل الأول</title>
+    <para>هذه هي الفقرة الأولى</para>
+    <important>
+        <title>هذا عنوان مهم</title>
+        <para>هذه فقرة من النص المهم</para>
+    </important>
+    <para>هذه هي الفقرة الثانية</para>
+  </section>
+  <section id="mysection2">
+    <title>عنوان الفصل الثاني</title>
+    <para>هذه هي الفقرة الأولى</para>
+    <para>هذه هي الفقرة الثانية</para>
+    <section id="mysubsection1">
+      <title>عنوان فصل فرعي</title>
+      <para>هذه الفقرة هي جزء من فصل فرعي داخل الفصل الثاني</para>
+      <para>
+        لمزيد من التفاصيل انظر 
+        <xref linkend="mysection1"/>
+      </para>
+    </section>
+  </section>
+</article>'''
 
   @expose(percentTemplate,["cookies.html"])
   def cookies(self, rq, *args):
