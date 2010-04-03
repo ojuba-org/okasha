@@ -18,7 +18,12 @@ Copyright © 2009, Muayyad Alsadi <alsadi@ojuba.org>
 """
 
 import sys, os, os.path, time, re
-import json # for templates
+
+# import json for templates
+try: import json
+except ImportError:
+  import simplejson as json
+
 import urlparse # for parsing query string
 from cgi import escape, FieldStorage # for html escaping
 from operator import attrgetter # for OkashaFields
@@ -259,7 +264,7 @@ def formatTemplate(rq, v, bfn=None):
   if not os.path.isdir(d): raise fileNotFoundException()
   if not bfn: bfn='root.html'
   fn=os.path.join(d, bfn)
-  try: tmp=open(fn,'rt').read().decode('utf-8')
+  try: tmp=open(fn,'r').read().decode('utf-8')
   except IOError: raise fileNotFoundException()
   except:
     rq.webapp._logger.debug('template error fn=[%s]' % fn)
@@ -282,7 +287,7 @@ def percentTemplate(rq, v, bfn=None):
   if not os.path.isdir(d): raise fileNotFoundException()
   if not bfn: bfn='root.html'
   fn=os.path.join(d, bfn)
-  try: tmp=open(fn,'rt').read().decode('utf-8')
+  try: tmp=open(fn,'r').read().decode('utf-8')
   except IOError: raise fileNotFoundException()
   except:
     rq.webapp._logger.debug('template error fn=[%s]' % fn)
