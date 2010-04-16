@@ -446,10 +446,13 @@ class baseWebApp:
         start_response("302 Temporary Redirect", [('Location',u),('content-type', 'text/html')])
         return [('<html><body><a href="%s">moved</a></body></html>' % escape(u))]
     # pass control to the right method
+    f=None
     if rq.uriList and not rq.uriList[0].startswith('_') and hasattr(self, rq.uriList[0]):
       f=getattr(self, rq.uriList[0])
-      a=rq.uriList[1:]
-    else:
+      # make sure "f" is callable not a property
+      if not hasattr(f,"__call__"): f=None
+      else: a=rq.uriList[1:]
+    if not f:
       f=self._root
       a=rq.uriList
     try: r=f(rq, *a)
