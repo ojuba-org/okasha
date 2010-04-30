@@ -422,7 +422,7 @@ class baseWebApp:
     if rq.uri==None:
       # handle malformed uri
       return self._handleException(rq, webAppBaseException(500))
-    self._logger.info('got uri=[%s]' % rq.uri)
+    self._logger.info('got request for uri=[%s] from ip=[%s]' % (rq.uri,rq.environ.get('REMOTE_ADDR','unkown')))
     self._logger.debug('got env=[%s]' % rq.environ)
     rq.q._ok_max_files_count=self._max_files_count
     # check if we need to serve static content
