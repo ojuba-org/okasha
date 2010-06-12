@@ -27,7 +27,17 @@ def stringOrFloat(s):
   try: return float(s)
   except ValueError: return s
 
+def stringOrInt(s):
+  try: return int(s)
+  except ValueError: return s
+
+
 def strverscmp(a,b):
+  "something like GNU strverscmp"
+  return cmp([stringOrInt(i) for i in dD_re.findall(a)],
+    [stringOrInt(i) for i in dD_re.findall(b)])
+
+def strverscmp_old(a,b):
   "something like GNU strverscmp"
   return cmp([stringOrFloat(i) for i in dD_re.findall(a)],
     [stringOrFloat(i) for i in dD_re.findall(b)])
