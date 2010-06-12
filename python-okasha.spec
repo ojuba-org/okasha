@@ -6,7 +6,7 @@ Name: python-okasha
 Summary: trivial WSGI web framework for python
 URL: http://okasha.ojuba.org
 Version: 0.1.0
-Release: 1%{?dist}
+Release: 2%{?dist}
 Source0: http://git.ojuba.org/cgit/%{srcname}/snapshot/%{srcname}-%{version}.tar.bz2
 License: Waqf
 Group: System Environment/Base
@@ -24,14 +24,14 @@ Almost do-nothing web framewrok that features:
 %package xslt
 Summary:  xslt templates and support for okasha framework
 Group: System Environment/Base
-Requires: python-lxml
+Requires: %{name}, python-lxml
 %description xslt
 Adds support for xslt-based templates using python's lxml package
 
 %package kid
 Summary:  kid templates and support for okasha framework
 Group: System Environment/Base
-Requires: python-kid
+Requires: %{name}, python-kid
 %description kid
 Adds support for kid-based templates using python's kid package
 
@@ -79,6 +79,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/doc/%{name}-docs/
 
 %changelog
+* Sat Jun 12 2010  Muayyad Saleh AlSadi <alsadi@ojuba.org> - 0.1.0-2
+- let python-okasha-xslt and python-okasha-kid depend on python-okasha
+
 * Sat Jun 12 2010  Muayyad Saleh AlSadi <alsadi@ojuba.org> - 0.1.0-1
 - initial packing
 
