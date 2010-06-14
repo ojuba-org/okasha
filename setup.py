@@ -1,5 +1,5 @@
 #! /usr/bin/python
-from distutils.core import setup
+from setuptools import setup, find_packages
 from glob import *
 import os, sys
 # to install type: 
@@ -13,6 +13,7 @@ setup (name='okasha', version='0.1.0',
       url='http://git.ojuba.org/cgit/okasha/about/',
       license='Waqf',
       packages=['okasha'],
+      test_suite="testsuit",
       data_files=[]
 )
 
