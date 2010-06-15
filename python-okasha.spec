@@ -38,7 +38,7 @@ Adds support for kid-based templates using python's kid package
 %package docs
 Summary:  documentation for okasha the trivial WSGI web framework for python
 Group: System Environment/Base
-Requires: python-okasha-kid python-okasha-xslt
+Requires: python-okasha-kid python-okasha-xslt python-paste
 %description docs
 documentation for okasha and a sample web application that uses okasha
 
