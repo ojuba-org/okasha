@@ -20,6 +20,8 @@ import sys, os, os.path, threading
 from lxml import etree
 from utils import ObjectsCache # kid has its own cache
 
+from baseWebApp import fileNotFoundException
+
 xsltCache=ObjectsCache(lock=threading.Lock())
 
 def xsltTemplate(rq, o, bfn=None, **kw):

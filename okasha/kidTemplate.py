@@ -18,6 +18,7 @@ Copyright © 2009, Muayyad Alsadi <alsadi@ojuba.org>
 """
 import sys, os, os.path
 import kid
+from baseWebApp import fileNotFoundException
 #from utils import ObjectsCache # kid has its own cache
 
 def kidTemplate(rq, o, bfn=None, **kw):
