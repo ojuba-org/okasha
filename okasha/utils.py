@@ -21,6 +21,7 @@ import bisect
 from itertools import groupby,imap
 import re
 
+fs_encoding=sys.getfilesystemencoding().startswith('ANSI') and 'UTF-8' or sys.getfilesystemencoding()
 dD_re=re.compile(ur'(\d+|\D+)')
 
 def stringOrFloat(s):
@@ -42,13 +43,12 @@ def strverscmp_old(a,b):
   return cmp([stringOrFloat(i) for i in dD_re.findall(a)],
     [stringOrFloat(i) for i in dD_re.findall(b)])
 
-
 def fromFs(filenameblob):
   """
   recives a blob encoded in filesystem encoding and convert it into a unicode object
   """
   if type(filenameblob)!=unicode:
-  	return filenameblob.decode(sys.getfilesystemencoding())
+    return filenameblob.decode(fs_encoding)
   return filenameblob
 
 def toFs(filename):
@@ -56,7 +56,7 @@ def toFs(filename):
   recives a unicode object and encode it into filesystem encoding
   """
   if type(filename)==unicode:
-  	return filename.encode(sys.getfilesystemencoding())
+    return filename.encode(fs_encoding)
   return filename
 
 
