@@ -219,7 +219,10 @@ class expose:
     """
     a decorator that applies the result of the function to the provided template
     """
-    self._template=template
+    if type(template) is type:
+      self._template=template(*templateArgs,**templateKw)
+    else:
+      self._template=template
     self._templateArgs=templateArgs
     self._templateKw=templateKw
     self._response=responseCode
