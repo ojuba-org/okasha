@@ -21,6 +21,7 @@ Copyright © 2009, Muayyad Alsadi <alsadi@ojuba.org>
 from okasha.baseWebApp import *
 from okasha.kidTemplate import kidTemplate
 from okasha.xsltTemplate import xsltTemplate
+from okasha.bottleTemplate import bottleTemplate
 
 class webApp(baseWebApp):
   def __init__(self, mode,*args, **kw):
@@ -82,10 +83,11 @@ You query is [<strong>%(q)s</strong>]<br/>
 <ul>
 <li><a href="%(script)s/text">plain text</a></li>
 <li><a href="%(script)s/verbatim/some/args/?id=5">verbatim html</a></li>
-<li>same method can be <a href="%(script)s/selective/?type=t">plain</a> or <a href="%(script)s/selective/?type=h">html</a> at run time<li>
+<li>same method can be <a href="%(script)s/selective/?type=t">plain</a> or <a href="%(script)s/selective/?type=h">html</a> at run time</li>
 <li><a href="%(script)s/tmp/some/args/?id=5">tmp</a></li>
 <li><a href="%(script)s/tmp/err/raised/?id=5">tmp (not allowed)</a></li>
 <li><a href="%(script)s/format/some/args/?id=5">format</a></li>
+<li><a href="%(script)s/bottletmp/red/yellow/green/">bottle templates</a></li>
 <li><a href="%(script)s/kidtmp/some/args/?id=5">kid templates</a></li>
 <li><a href="%(script)s/xslt/some/args/?id=5">xslt templates</a></li>
 <li><a href="%(script)s/docbook/some/args/?id=5">docbook templates</a></li>
@@ -123,6 +125,20 @@ You query is [<strong>%(q)s</strong>]<br/>
     return {
       'title':'Okasha simple format templates',
       'key1':'val1','key2':'val2','args':'/'.join(args)
+      }
+
+  @expose(bottleTemplate,["bottle-test.tpl"])
+  def bottletmp(self, rq, *args):
+    """
+    this is how you can use simple % formatting templates,
+    just return a dictionary, and it will be applied to the named template.
+    to test it visit
+      http://localhost:8080/bottletmp/
+      http://localhost:8080/bottletmp/red/yellow/green/
+    """
+    return {
+      'title':'Okasha simple bottle templates',
+      'colors':args
       }
 
   @expose(kidTemplate,["kidtest.kid"])

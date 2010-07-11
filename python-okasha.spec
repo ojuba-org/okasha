@@ -5,8 +5,8 @@ Name: python-okasha
 
 Summary: trivial WSGI web framework for python
 URL: http://okasha.ojuba.org
-Version: 0.1.0
-Release: 2%{?dist}
+Version: 0.2.0
+Release: 1%{?dist}
 Source0: http://git.ojuba.org/cgit/%{srcname}/snapshot/%{srcname}-%{version}.tar.bz2
 License: Waqf
 Group: System Environment/Base
@@ -66,6 +66,8 @@ rm -rf $RPM_BUILD_ROOT
 %doc LICENSE-en LICENSE-ar.txt README README.ar.txt TODO
 %{python_sitelib}/%{srcname}/__init__.py*
 %{python_sitelib}/%{srcname}/baseWebApp.py*
+%{python_sitelib}/%{srcname}/bottleTemplate.py*
+%{python_sitelib}/%{srcname}/bottleTemplateSegment.py*
 %{python_sitelib}/%{srcname}/utils.py*
 %{python_sitelib}/*.egg-info
 
