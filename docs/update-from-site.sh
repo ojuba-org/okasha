@@ -2,7 +2,7 @@
 baseurl="http://www.ojuba.org/wiki/_export/xhtml/okasha/"
 for i in "" deployment sample1 templates elixir
 do
-fn="${i:-about}.html"
+fn="${i:-index}.html"
 i="${i:-الصفحة_الأولى}"
 echo "getting $fn from ${baseurl}${i}"
 rm "$fn" 2>/dev/null || :

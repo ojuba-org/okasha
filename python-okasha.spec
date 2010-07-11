@@ -12,7 +12,7 @@ License: Waqf
 Group: System Environment/Base
 BuildArch: noarch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-BuildRequires: python
+BuildRequires: python, perl
 %description
 Almost do-nothing web framewrok that features:
   * WSGI-enabled ie. can be used with mod_wsgi, mod_python, fast cgi, cgi, with paste or even without even a server
@@ -48,6 +48,9 @@ Documentation is installed on /%{_datadir}/doc/%{name}-docs/
 %setup -q -n %{srcname}-%{version}
 
 %build
+pushd docs
+bash ./update-from-site.sh
+popd
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -57,6 +60,8 @@ rm -rf $RPM_BUILD_ROOT
 
 mkdir -p $RPM_BUILD_ROOT/%{_datadir}/doc/%{name}-docs/
 cp -a test.py test.wsgi files templates $RPM_BUILD_ROOT/%{_datadir}/doc/%{name}-docs/
+rm docs/update-from-site.sh
+cp -a docs/* $RPM_BUILD_ROOT/%{_datadir}/doc/%{name}-docs/
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -81,6 +86,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/doc/%{name}-docs/
 
 %changelog
+* Sun Jul 11 2010  Muayyad Saleh AlSadi <alsadi@ojuba.org> - 0.2.0-2
+- add bottle tamplates support
+- add documentation
+
 * Sat Jun 12 2010  Muayyad Saleh AlSadi <alsadi@ojuba.org> - 0.1.0-2
 - let python-okasha-xslt and python-okasha-kid depend on python-okasha
 
