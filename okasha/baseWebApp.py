@@ -459,8 +459,10 @@ class baseWebApp:
       f=self._root
       a=rq.uriList
     try: r=f(rq, *a)
+    except (KeyboardInterrupt, SystemExit, MemoryError): raise
     except webAppBaseException as e:
       return self._handleException(rq, e)
+    #TODO: treat any other exception as 500
     return r
 
   @expose()
