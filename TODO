@@ -1,5 +1,7 @@
-  * use ObjectsCache to cache templates
   * use ObjectsCache to cache static files
+  * make some template functions into classes to make them cache the template file
+  * document how okasha is compared to django, Pylons, Sponge, Tornado, Turbogears, Turbogears 2, web.py, 
+  Flask, Bottle
   * add a function argument ObjectsCache that skips adding to cache if True
   * implement fileSizeGreaterThan() and use it
 
