@@ -1,0 +1,67 @@
+.clear {clear:both; padding-bottom:2px;}
+pre, code { direction: ltr;}
+a img { border: none; }
+a { text-decoration: none;}
+a:hover { text-decoration: underline; }
+
+body {
+  font-family: "Liberation Sans", "KacstOne", "Simplified Naskh", "KFGQPC Uthman Taha Naskh", "ArabeyesQr", "Times New Roman", "sans", "Sans";
+	background:#fff;
+	margin:6em;padding:0;border:0;
+}
+
+h1, h2, h3, h4 {
+	font-family: luxi sans,"Liberation Sans", "KacstOne", "Simplified Naskh", "KFGQPC Uthman Taha Naskh", "ArabeyesQr", "Times New Roman", "sans", "Sans", sans-serif;
+	color: #437f22;
+	font-weight: bold;
+}
+
+pre {
+  background: #cda;
+  border: #cdc solid 2px;
+  margin: 2em;
+  padding: 0.5em;
+}
+
+
+.noteclassic, .noteimportant, .notewarning, .notetip {
+  margin: 2em;
+  margin-left: auto;
+  margin-right: auto;
+  width: 70% !important;
+  min-height: 40px;
+  clear: both;
+  text-align: justify;
+  vertical-align: middle;
+  border-collapse: collapse;
+  padding: 15px 60px 15px 20px;
+  background-position: right 50%;
+  background-repeat: no-repeat;
+  -moz-border-radius: 20px;
+  -khtml-border-radius: 20px;
+  border-radius: 20px;
+}
+ 
+.noteclassic {
+  /*border: 1px solid #99D;*/
+  background-color: #eef;
+  background-image: url(images/note.png);
+}
+ 
+.noteimportant {
+  /*border: 1px solid #ff0;*/
+  background-color: #ffc;
+  background-image: url(images/important.png);
+}
+ 
+.notewarning {
+  /*border: 1px solid #d99;*/
+  background-color: #fdd;
+  background-image: url(images/warning.png);
+}
+ 
+.notetip {
+  /*border: 1px solid #9d9;*/
+  background-color: #dfd;
+  background-image: url(images/tip.png);
+}
