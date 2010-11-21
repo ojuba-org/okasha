@@ -1,0 +1,362 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ar"
+ lang="ar" dir="rtl">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>وثائق عكاشة</title>
+<link rel="stylesheet" media="all" type="text/css" href="all.css" />
+<link rel="stylesheet" media="screen" type="text/css" href="screen.css" />
+<link rel="stylesheet" media="print" type="text/css" href="print.css" />
+</head>
+<body>
+<div class="dokuwiki export">
+<!-- TOC START -->
+<div class="toc">
+<div class="tocheader toctoggle" id="toc__header">جدول المحتويات</div>
+<div id="toc__inside">
+
+<ul class="toc">
+<li class="level1"><div class="li"><span class="li"><a href="#مثال_أولي_بسيط" class="toc">مثال أولي بسيط</a></span></div>
+<ul class="toc">
+<li class="level2"><div class="li"><span class="li"><a href="#كيف_نبدأ" class="toc">كيف نبدأ ؟</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="#كيف_نشغ_ل_هذا_التطبيق" class="toc">كيف نشغّل هذا التطبيق ؟</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="#ما_معنى_الكود" class="toc">ما معنى الكود ؟</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="#ماذا_يفعل_هذا_التطبيق_الخالي" class="toc">ماذا يفعل هذا التطبيق الخالي ؟</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="#كتابة_دالة_خاصة_بنا" class="toc">كتابة دالة خاصة بنا</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="#التفاعل_مع_عناوين_url" class="toc">التفاعل مع عناوين URL</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="#التفاعل_مع_النماذج_forms" class="toc">التفاعل مع النماذج forms</a></span></div></li>
+</ul>
+</li>
+</div>
+</div>
+<!-- TOC END -->
+
+
+
+<h1><a name="مثال_أولي_بسيط" id="مثال_أولي_بسيط">مثال أولي بسيط</a></h1>
+<div class="level1">
+
+<p>
+إن غالبية دوال وصنوف عكاشة موثّقة جيّداً لذا يمكنك استعمال pydoc للوصول لها.
+</p>
+
+<p>
+كذلك يمكنك استعمال المثال <a target="_blank" href="http://git.ojuba.org/cgit/okasha/tree/test.py" class="urlextern" title="http://git.ojuba.org/cgit/okasha/tree/test.py"  rel="nofollow">test.py</a> الموجود في كود عكاشة فهو يوضّح أغلب استخدامات عكاشة.
+</p>
+
+<p>
+بعكس ذاك المثال المسهب فإن هذه الوثيقة ستعلّمك كيف تعمل مشروع بدهي مثل “مرحبا، يا عالم!”
+</p>
+
+<p>
+وقبل أن تبدأ تخلّص من الخوف فأغلب الكود هو تعليقات (مجرد شرح).
+</p>
+
+</div>
+<!-- SECTION "مثال أولي بسيط" [1-652] -->
+<h2><a name="كيف_نبدأ" id="كيف_نبدأ">كيف نبدأ ؟</a></h2>
+<div class="level2">
+
+<p>
+أنشء مجلّد للمشروع. وإن لم تكن الاعتماديات<sup><a href="#fn__1" name="fnt__1" id="fnt__1" class="fn_top">1)</a></sup> مثبّتة في النظام أو كنت تريد أن يكون التطبيق الخاص بك قابل للنقل portable إلى أجهزة لا تضمن أن يكون عكاشة وبقية الاعتماديات مثبّتا فيها كل ما عليك هو وضع نسخة من تلك الحزم داخل مجلد المشروع الحالي.
+</p>
+
+<p>
+بعكس أطر الويب الأخرى تطبيق الويب هو مجرّد ملف واحد به صنف واحد 
+لذا اعمل ملف سمّه مثلا myapp.py ولتكن محتوياته كما يلي:
+
+</p>
+<pre class="code python"><span class="co1">#! /usr/bin/python</span>
+<span class="co1"># -*- coding: UTF-8 -*-</span>
+<span class="st0">&quot;&quot;&quot;
+this is my first okasha web app
+&quot;&quot;&quot;</span>
+<span class="kw1">from</span> okasha.<span class="me1">baseWebApp</span> <span class="kw1">import</span> <span class="sy0">*</span>
+&nbsp;
+<span class="kw1">class</span> MyApp<span class="br0">&#40;</span>baseWebApp<span class="br0">&#41;</span>:
+  <span class="kw1">def</span> <span class="kw4">__init__</span><span class="br0">&#40;</span><span class="kw2">self</span>, <span class="sy0">*</span>args, <span class="sy0">**</span>kw<span class="br0">&#41;</span>:
+    baseWebApp.<span class="kw4">__init__</span><span class="br0">&#40;</span><span class="kw2">self</span>,<span class="sy0">*</span>args, <span class="sy0">**</span>kw<span class="br0">&#41;</span></pre>
+
+<p>
+وبهذا نكون قد أنهينا أول تطبيق لنا
+</p>
+
+</div>
+<!-- SECTION "كيف نبدأ ؟" [653-1739] -->
+<h2><a name="كيف_نشغ_ل_هذا_التطبيق" id="كيف_نشغ_ل_هذا_التطبيق">كيف نشغّل هذا التطبيق ؟</a></h2>
+<div class="level2">
+
+<p>
+هناك عدّة طرق لإطلاق تطبيقات عكاشة. أسهلها وأفضلها خلال فترة التطوير هو استعمال حزمة python-paste
+</p>
+
+<p>
+يمكنك عمل ملف منفصل اسمه serve.py مثلا يقوم على تشغيل التطبيق الخاص بك وذلك كما يلي
+
+</p>
+<pre class="code python"><span class="co1">#! /usr/bin/python</span>
+<span class="co1"># -*- coding: UTF-8 -*-</span>
+<span class="kw1">import</span> <span class="kw3">sys</span>, <span class="kw3">os</span>, <span class="kw3">os</span>.<span class="me1">path</span>
+<span class="co1"># this requires python-paste package</span>
+<span class="kw1">from</span> paste <span class="kw1">import</span> httpserver
+<span class="kw1">from</span> myapp <span class="kw1">import</span> MyApp
+&nbsp;
+d=<span class="kw3">os</span>.<span class="me1">path</span>.<span class="me1">dirname</span><span class="br0">&#40;</span><span class="kw3">sys</span>.<span class="me1">argv</span><span class="br0">&#91;</span>0<span class="br0">&#93;</span><span class="br0">&#41;</span>
+application=MyApp<span class="br0">&#40;</span>
+      <span class="kw3">os</span>.<span class="me1">path</span>.<span class="me1">join</span><span class="br0">&#40;</span>d,<span class="st0">'templates'</span><span class="br0">&#41;</span>,
+      staticBaseDir=<span class="br0">&#123;</span><span class="st0">'/media/'</span>:<span class="kw3">os</span>.<span class="me1">path</span>.<span class="me1">join</span><span class="br0">&#40;</span>d,<span class="st0">'media'</span><span class="br0">&#41;</span><span class="br0">&#125;</span>
+<span class="br0">&#41;</span><span class="sy0">;</span>
+httpserver.<span class="me1">serve</span><span class="br0">&#40;</span>application, host=<span class="st0">'127.0.0.1'</span>, port=<span class="st0">'8080'</span><span class="br0">&#41;</span></pre>
+
+<p>
+فعند تنفيذ برنامج serve.py أعلاه سيعمل خادم paste الضمني المنضدد على المنفذ 8080 (يمكنك تحديد أي رقم) وسيقبل أي اتصالات من العنوان المحلي 127.0.0.1 . إن كنت تريده أن يستقبل من كل العناوين اجعله 0.0.0.0 للمزيد من الخيارات انظر <a target="_blank" href="http://pythonpaste.org/modules/httpserver.html" class="urlextern" title="http://pythonpaste.org/modules/httpserver.html"  rel="nofollow">وثائق paste</a>
+</p>
+
+<p>
+بل ويمكن وضع هذا الكود داخل الوحدة التي تحتوي تطبيق الويب نفسه يعني في مثالنا يمكن الاستغناء عن serve.py وذلك بأن نجعل ملف myapp.py كما يلي:
+</p>
+<pre class="code python"><span class="co1">#! /usr/bin/python</span>
+<span class="co1"># -*- coding: UTF-8 -*-</span>
+<span class="st0">&quot;&quot;&quot;
+this is my first okasha web app
+&quot;&quot;&quot;</span>
+<span class="kw1">from</span> okasha.<span class="me1">baseWebApp</span> <span class="kw1">import</span> <span class="sy0">*</span>
+&nbsp;
+<span class="kw1">class</span> MyApp<span class="br0">&#40;</span>baseWebApp<span class="br0">&#41;</span>:
+    <span class="kw1">def</span> <span class="kw4">__init__</span><span class="br0">&#40;</span><span class="kw2">self</span>, <span class="sy0">*</span>args, <span class="sy0">**</span>kw<span class="br0">&#41;</span>:
+      baseWebApp.<span class="kw4">__init__</span><span class="br0">&#40;</span><span class="kw2">self</span>,<span class="sy0">*</span>args, <span class="sy0">**</span>kw<span class="br0">&#41;</span>
+&nbsp;
+<span class="kw1">if</span> __name__ == <span class="st0">'__main__'</span>:
+    <span class="co1"># this requires python-paste package</span>
+    <span class="kw1">from</span> paste <span class="kw1">import</span> httpserver
+    <span class="kw1">import</span> <span class="kw3">sys</span>, <span class="kw3">os</span>, <span class="kw3">os</span>.<span class="me1">path</span>
+&nbsp;
+    d=<span class="kw3">os</span>.<span class="me1">path</span>.<span class="me1">dirname</span><span class="br0">&#40;</span><span class="kw3">sys</span>.<span class="me1">argv</span><span class="br0">&#91;</span>0<span class="br0">&#93;</span><span class="br0">&#41;</span>
+    application=MyApp<span class="br0">&#40;</span>
+      <span class="kw3">os</span>.<span class="me1">path</span>.<span class="me1">join</span><span class="br0">&#40;</span>d,<span class="st0">'templates'</span><span class="br0">&#41;</span>,
+      staticBaseDir=<span class="br0">&#123;</span><span class="st0">'/media/'</span>:<span class="kw3">os</span>.<span class="me1">path</span>.<span class="me1">join</span><span class="br0">&#40;</span>d,<span class="st0">'media'</span><span class="br0">&#41;</span><span class="br0">&#125;</span>
+    <span class="br0">&#41;</span><span class="sy0">;</span>
+    httpserver.<span class="me1">serve</span><span class="br0">&#40;</span>application, host=<span class="st0">'127.0.0.1'</span>, port=<span class="st0">'8080'</span><span class="br0">&#41;</span></pre>
+
+<p>
+وفي هذه الحالة لا نحتاج ملف serve.py حيث يمكننا إطلاق تطبيق الويب عبر تنفيذ myapp.py حيث أن الجزء في آخر الملف لن ينفّذ في حالة استخدام الملف كوحدة بايثونية (مكتبة) بل عند تنفيذه كبرنامج وليس مكتبة.
+</p>
+
+</div>
+<!-- SECTION "كيف نشغّل هذا التطبيق ؟" [1740-4124] -->
+<h2><a name="ما_معنى_الكود" id="ما_معنى_الكود">ما معنى الكود ؟</a></h2>
+<div class="level2">
+
+<p>
+في أول البرنامج أول خطوة قمنا بها هي استيراد محتويات إطار الويب عكاشة
+</p>
+<pre class="code">from okasha.baseWebApp import *</pre>
+
+<p>
+
+ثم قمنا بتعريف كائن مشتق من تطبيق الويب الأساسي في عكاشة baseWebApp 
+
+</p>
+<pre class="code python"><span class="kw1">class</span> MyApp<span class="br0">&#40;</span>baseWebApp<span class="br0">&#41;</span>:</pre>
+
+<p>
+
+وفيه عرّفنا دالة الاستهلال التي كل مهمّتها هي استدعاء الدالة في الصنف الأساس وتمرير المعاملات له بشكل أعمى (سنشرح هذه المعاملات لاحقا)
+
+</p>
+<pre class="code python">  <span class="kw1">def</span> <span class="kw4">__init__</span><span class="br0">&#40;</span><span class="kw2">self</span>, <span class="sy0">*</span>args, <span class="sy0">**</span>kw<span class="br0">&#41;</span>:
+    baseWebApp.<span class="kw4">__init__</span><span class="br0">&#40;</span><span class="kw2">self</span>,<span class="sy0">*</span>args, <span class="sy0">**</span>kw<span class="br0">&#41;</span></pre>
+
+<p>
+يمكنك استقبال معاملات خاصة بك هكذا للاحتفاظ بها لاستخدامها لاحقا هكذا
+
+</p>
+<pre class="code python">  <span class="kw1">def</span> <span class="kw4">__init__</span><span class="br0">&#40;</span><span class="kw2">self</span>, name, <span class="sy0">*</span>args, <span class="sy0">**</span>kw<span class="br0">&#41;</span>:
+    <span class="kw2">self</span>.<span class="me1">name</span>=name
+    baseWebApp.<span class="kw4">__init__</span><span class="br0">&#40;</span><span class="kw2">self</span>,<span class="sy0">*</span>args, <span class="sy0">**</span>kw<span class="br0">&#41;</span></pre>
+
+<p>
+أما كود التشغيل فهو كما يلي:
+</p>
+<pre class="code">from paste import httpserver</pre>
+
+<p>
+نستورد خادم http من داخل حزمة paste. يستقبل خادم paste تطبيق الويب المتوافق مع WSGI كمعامل أول هكذا 
+
+</p>
+<pre class="code">httpserver.serve(application, host=&#039;127.0.0.1&#039;, port=&#039;8080&#039;)</pre>
+
+<p>
+
+حيث application هو تطبيق الويب وهو في حالتنا كائن فرد من الصنف MyApp الذي اشتققناه من تطبيق الويب الأساسي في عكاشة baseWebApp
+</p>
+
+<p>
+نقوم بعمل هذا الكائن كما نعمل أي متغير أو كائن في بايثون
+
+</p>
+<pre class="code python">    d=<span class="kw3">os</span>.<span class="me1">path</span>.<span class="me1">dirname</span><span class="br0">&#40;</span><span class="kw3">sys</span>.<span class="me1">argv</span><span class="br0">&#91;</span>0<span class="br0">&#93;</span><span class="br0">&#41;</span>
+    application=MyApp<span class="br0">&#40;</span>
+      <span class="kw3">os</span>.<span class="me1">path</span>.<span class="me1">join</span><span class="br0">&#40;</span>d,<span class="st0">'templates'</span><span class="br0">&#41;</span>,
+      staticBaseDir=<span class="br0">&#123;</span><span class="st0">'/media/'</span>:<span class="kw3">os</span>.<span class="me1">path</span>.<span class="me1">join</span><span class="br0">&#40;</span>d,<span class="st0">'media'</span><span class="br0">&#41;</span><span class="br0">&#125;</span>
+    <span class="br0">&#41;</span><span class="sy0">;</span></pre>
+
+<p>
+
+المتغير d يمثّل المجلّد الذي يحتوي تطبيق الويب
+وقد قمنا بتحديد مجلد فرعي عنه اسمه templates كي يحتوي القوالب كذلك طلبنا أن تحال كل العناوين التي تبدأ ب /media/ إلى المجلد الفرعي media داخل مجلد التطبيق حيث يمكننا استخدامه لوضع ملفات الصور وملفات css وغيرها من الملفات الساكنة static files.
+</p>
+
+<p>
+يوفّر عكاشة أكثر من طريقة لتخديم الملفات الساكنة منها أن تمرّر له قاموس staticBaseDir مفاتيحه هي الجزء في بداية العنوان ثم المجلد الذي سيتم البحث عن الملفات فيه (يمكن استخدام أكثر من مجلد)
+</p>
+
+<p>
+كذلك هناك خاصية أخرى وهي عمل إعادة توجيه redirect لطلبات معيّنة إلى عنوان آخر أو خادم آخر يحتوي تلك الملفات الساكنة.
+</p>
+
+<p>
+للمزيد انظر وثائق دالة الاستهلال لصنف baseWebApp في كود عكاشة.
+</p>
+
+</div>
+<!-- SECTION "ما معنى الكود ؟" [4125-7020] -->
+<h2><a name="ماذا_يفعل_هذا_التطبيق_الخالي" id="ماذا_يفعل_هذا_التطبيق_الخالي">ماذا يفعل هذا التطبيق الخالي ؟</a></h2>
+<div class="level2">
+
+<p>
+سيبحث عكاشة عن الطريقة/الدالة في كائن التطبيق فإن لم يجد  واحدة مناسبة فإنه يستدعي الدالة _root ويمرر لها كائن من الصنف Request يحتوي تفاصيل الطلب ويمرّر له بقية عناصر العنوان.
+وحيث أنّنا لم نعرّف تلك الدالة فإن دالة _root التلقائية الموجودة في عكاشة تعمل وتظهر لنا في شاشة المتصفح عند زيارة الموقع صفحة html تحتوي
+
+</p>
+<pre class="code">You requested [/]</pre>
+
+<p>
+
+فإن زرنا العنوان <a target="_blank" href="http://localhost:8080/hello/omar" class="urlextern" title="http://localhost:8080/hello/omar"  rel="nofollow">http://localhost:8080/hello/omar</a> سيظهر في المتصفح 
+
+</p>
+<pre class="code">You requested [/hello/omar]</pre>
+
+</div>
+<!-- SECTION "ماذا يفعل هذا التطبيق الخالي ؟" [7021-7789] -->
+<h2><a name="كتابة_دالة_خاصة_بنا" id="كتابة_دالة_خاصة_بنا">كتابة دالة خاصة بنا</a></h2>
+<div class="level2">
+
+<p>
+جرّب إضافة الكود التالي بعد دالة الاستهلال init في صنف MyApp
+
+</p>
+<pre class="code python">  @expose<span class="br0">&#40;</span><span class="br0">&#41;</span>
+  <span class="kw1">def</span> _root<span class="br0">&#40;</span><span class="kw2">self</span>, rq, <span class="sy0">*</span>args<span class="br0">&#41;</span>:
+    <span class="kw1">return</span> <span class="st0">&quot;&quot;&quot;&lt;html&gt;&lt;body&gt;
+&lt;img src=&quot;/media/logo.gif&quot;/&gt;
+&lt;h1&gt;welcome to my first okasha application&lt;/h1&gt;
+&lt;/body&gt;&lt;/html&gt;&quot;&quot;&quot;</span></pre>
+
+<p>
+
+الكثير من النّاس لا يألَفون استخدام @ أو ما يُسمى decorator 
+وشرحها في هذه المرحلة غير مناسب لكن اعلم أنها تستدعي دالة خاصة وهي expose موجودة داخل عكاشة تقوم هذه الدالة بتغيير الدالة التي بعدها وهي في مثالنا _root
+</p>
+
+<p>
+يمكنك أن ترى وثائق دالة expose في كود عكاشة حتى تعرف ما هي المعاملات التي تستقبلها لكن إن استعملتها دون أي معاملات كما فعلنا فهي تعني أننا لن نستعمل أي قوالب بل سنعيد كود html
+</p>
+
+<p>
+لاحظ أننا استعملنا ملف logo.gif الموجود في media لكن الرابط الذي استخدمناه قد لا يكون صحيحا دائما لأنه إن كان التطبيق يعمل من داخل سابقة ما حيث لا يكون التطبيق مربوط على جذر الخادم بل داخل سابقة هكذا <a target="_blank" href="http://myhost/myapp" class="urlextern" title="http://myhost/myapp"  rel="nofollow">http://myhost/myapp</a> ويكون ذلك مفيدا عندما يكون هناك أكثر من تطبيق على نفس النطاق domain
+</p>
+
+<p>
+وحتى لا تعيد كتابة الروابط يمكنك استخدام rq.script التي تعيد سابقة التطبيق الخاص بنا (طبعا ستكون نص خالي إن لم يكن هناك سابقة)
+</p>
+<pre class="code python">  @expose<span class="br0">&#40;</span><span class="br0">&#41;</span>
+  <span class="kw1">def</span> _root<span class="br0">&#40;</span><span class="kw2">self</span>, rq, <span class="sy0">*</span>args<span class="br0">&#41;</span>:
+    <span class="kw1">return</span> <span class="st0">&quot;&quot;&quot;&lt;html&gt;&lt;body&gt;
+&lt;img src=&quot;%s/media/logo.gif&quot;/&gt;
+&lt;h1&gt;welcome to my first okasha application&lt;/h1&gt;
+&lt;/body&gt;&lt;/html&gt;&quot;&quot;&quot;</span> <span class="sy0">%</span> rq.<span class="me1">script</span></pre>
+
+</div>
+<!-- SECTION "كتابة دالة خاصة بنا" [7790-9710] -->
+<h2><a name="التفاعل_مع_عناوين_url" id="التفاعل_مع_عناوين_url">التفاعل مع عناوين URL</a></h2>
+<div class="level2">
+<pre class="code python">  @expose<span class="br0">&#40;</span><span class="br0">&#41;</span>
+  <span class="kw1">def</span> hello<span class="br0">&#40;</span><span class="kw2">self</span>, rq, <span class="sy0">*</span>args<span class="br0">&#41;</span>:
+    <span class="kw1">if</span> <span class="kw1">not</span> args: s=<span class="st0">&quot;world&quot;</span>
+    <span class="kw1">else</span>: s=args<span class="br0">&#91;</span>0<span class="br0">&#93;</span>
+    <span class="kw1">return</span> <span class="st0">&quot;&quot;&quot;&lt;html&gt;&lt;body&gt;
+&lt;h1&gt;Hello, %s!&lt;/h1&gt;
+&lt;/body&gt;&lt;/html&gt;&quot;&quot;&quot;</span> <span class="sy0">%</span> s
+&nbsp;
+  @expose<span class="br0">&#40;</span><span class="br0">&#41;</span>
+  <span class="kw1">def</span> _root<span class="br0">&#40;</span><span class="kw2">self</span>, rq, <span class="sy0">*</span>args<span class="br0">&#41;</span>:
+    <span class="kw1">if</span> <span class="kw1">not</span> args: <span class="kw1">raise</span> redirectException<span class="br0">&#40;</span>rq.<span class="me1">script</span>+<span class="st0">'/hello/'</span><span class="br0">&#41;</span>
+    <span class="kw1">elif</span> args<span class="br0">&#91;</span><span class="nu0">0</span><span class="br0">&#93;</span>==<span class="st0">'favicon.ico'</span>: redirectException<span class="br0">&#40;</span>rq.<span class="me1">script</span>+<span class="st0">'/media/favicon.ico'</span><span class="br0">&#41;</span>
+    <span class="kw1">else</span>: <span class="kw1">raise</span> forbiddenException<span class="br0">&#40;</span><span class="br0">&#41;</span></pre>
+
+<p>
+
+في هذا المثال عملنا دالة اسمها hello سيتم تنفيذ هذه الدالة عند زيارة /hello/ أو /hello/Name/ أو ما شابه. هذه الدالة تستلم بقية العنوان على شكل معاملات حيث ستكون قيمة args منظومة خالية [] أو [&#039;Name&#039;] على الترتيب في المثالين.
+</p>
+
+<p>
+كذلك جعلنا الوصول لجذر التطبيق يحيل إلى العنوان /hello/ الذي بدوره يطبع Hello, world! لأنه لا يوجد تتمة للعنوان (المنظومة خالية)
+</p>
+
+<p>
+كذلك عملنا تحويلة أخرى داخل _root تحيل من favicon.ico إلى /media/favicon.ico
+</p>
+
+<p>
+أمّا إن لم يجد دالة مناسبة ولم يحصل أي من الحالتين السابقتين (أي لم نطلب جذر التطبيق ولا favicon) عندها سينفذ ما بعد else وهو في حالتنا رفع الخطأ رقم 403 ممنوع الوصول لتلك الصفحة.
+</p>
+
+<p>
+يمكنك مكان السطر الأخير كتابة ما يلي
+
+</p>
+<pre class="code">  else: raise fileNotFoundException()</pre>
+
+<p>
+
+حتى تحصل على الخطأ 404 (صفحة غير موجودة)
+</p>
+
+<p>
+كذلك يمكنك تخصيص الصفحة التي تظهر عند حدوث هذين الخطأين عبر تخصيص الدالة _403 و _404
+</p>
+
+</div>
+<!-- SECTION "التفاعل مع عناوين URL" [9711-11495] -->
+<h2><a name="التفاعل_مع_النماذج_forms" id="التفاعل_مع_النماذج_forms">التفاعل مع النماذج forms</a></h2>
+<div class="level2">
+
+<p>
+غيّر الدالة hello لتصبح كما يلي :
+</p>
+<pre class="code python">  @expose<span class="br0">&#40;</span><span class="br0">&#41;</span>
+  <span class="kw1">def</span> hello<span class="br0">&#40;</span><span class="kw2">self</span>, rq, <span class="sy0">*</span>args<span class="br0">&#41;</span>:
+    n=rq.<span class="me1">q</span>.<span class="me1">getfirst</span><span class="br0">&#40;</span><span class="st0">'n'</span>,<span class="st0">'world'</span><span class="br0">&#41;</span>.<span class="me1">decode</span><span class="br0">&#40;</span><span class="st0">'utf-8'</span><span class="br0">&#41;</span>
+    <span class="kw1">return</span> <span class="st0">&quot;&quot;&quot;&lt;html&gt;&lt;body&gt;
+&lt;h1&gt;Hello, {0}!&lt;/h1&gt;
+&lt;form name=&quot;MyForm&quot;&gt;
+Please enter name:
+&lt;input name=&quot;n&quot; type=&quot;text&quot; value=&quot;{0}&quot;&gt;&lt;/input&gt;
+&lt;/form&gt;
+&lt;/body&gt;&lt;/html&gt;&quot;&quot;&quot;</span>.<span class="me1">format</span><span class="br0">&#40;</span>n<span class="br0">&#41;</span></pre>
+
+<p>
+لاحظ استخدامنا ل rq.q.getfirst للحصول على قيمة عنصر من النموذج وهو في حالتنا n وهي ذاتها التي تأتي من مربع النص الذي اسمه n في كود html. إن لم تكن تلك القيمة التلقائية world مكانها
+</p>
+
+</div>
+<!-- SECTION "التفاعل مع النماذج forms" [11496-] --><div class="footnotes">
+<div class="fn"><sup><a href="#fnt__1" id="fn__1" name="fn__1" class="fn_bot">1)</a></sup> 
+الاعتماديات التي نحتاجها في هذا المثال هي عكاشة و python-paste فقط</div>
+</div>
+</div>
+</body>
+</html>

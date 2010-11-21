@@ -1,0 +1,275 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ar"
+ lang="ar" dir="rtl">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>وثائق عكاشة</title>
+<link rel="stylesheet" media="all" type="text/css" href="all.css" />
+<link rel="stylesheet" media="screen" type="text/css" href="screen.css" />
+<link rel="stylesheet" media="print" type="text/css" href="print.css" />
+</head>
+<body>
+<div class="dokuwiki export">
+<!-- TOC START -->
+<div class="toc">
+<div class="tocheader toctoggle" id="toc__header">جدول المحتويات</div>
+<div id="toc__inside">
+
+<ul class="toc">
+<li class="level1"><div class="li"><span class="li"><a href="#طرق_النشر" class="toc">طرق النشر</a></span></div>
+<ul class="toc">
+<li class="level2"><div class="li"><span class="li"><a href="#طريقة_cgi_البائدة_وما_يشبهها" class="toc">طريقة CGI البائدة وما يشبهها</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="#عبر_خادم_python-paste_المنضدد" class="toc">عبر خادم python-paste المنضدد</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="#عبر_mod_proxy_في_apache" class="toc">عبر mod_proxy في apache</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="#عبر_google_app_engine" class="toc">عبر google app engine</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="#عبر_mod_python_في_خادم_apache" class="toc">عبر mod_python في خادم apache</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="#عبر_mod_wsgi_في_خادم_apache" class="toc">عبر mod_wsgi في خادم apache</a></span></div>
+<ul class="toc">
+<li class="level3"><div class="li"><span class="li"><a href="#طريقة_توزيع_الملفات" class="toc">طريقة توزيع الملفات</a></span></div></li>
+<li class="level3"><div class="li"><span class="li"><a href="#إعداد_apache" class="toc">إعداد apache</a></span></div></li>
+<li class="level3"><div class="li"><span class="li"><a href="#خادم_أخرى" class="toc">خادم أخرى</a></span></div></li>
+</ul>
+</li>
+<li class="level2"><div class="li"><span class="li"><a href="#تقييم_خوادم_wsgi" class="toc">تقييم خوادم WSGI</a></span></div></li>
+</ul>
+</li>
+</div>
+</div>
+<!-- TOC END -->
+
+
+
+<h1><a name="طرق_النشر" id="طرق_النشر">طرق النشر</a></h1>
+<div class="level1">
+
+<p>
+إن هناك عشرات الطرق لإطلاق تطبيقات عكاشة شأنه في ذلك شان تطبيقات WSGI حيث أنها معايير كتابة تطبيقات الويب في بايثون. ومن هذه الطرق
+</p>
+
+<p>
+الطريقة التي ننصح بها هي mod_wsgi بشكل رسمي وعبر python-paste للاختبار والتطوير
+</p>
+
+</div>
+<!-- SECTION "طرق النشر" [1-395] -->
+<h2><a name="طريقة_cgi_البائدة_وما_يشبهها" id="طريقة_cgi_البائدة_وما_يشبهها">طريقة CGI البائدة وما يشبهها</a></h2>
+<div class="level2">
+
+<p>
+استخدم دالة <a target="_blank" href="http://www.python.org/dev/peps/pep-0333/#the-server-gateway-side" class="urlextern" title="http://www.python.org/dev/peps/pep-0333/#the-server-gateway-side"  rel="nofollow">run_with_cgi</a> الموجودة في برنامج  الصغير المرفق مع PEP 0333 هذه الدالة تستلم كائن تطبيق الويب.
+</p>
+
+<p>
+ضع ذاك الكود (كود الدالة وإنشاء الكائن ثم استدعاء الدالة مع تمرير التطبيق لها) في ملف ثم ضعه في cgi-bin ثم اسمح بتنفيذه.
+</p>
+
+</div>
+<!-- SECTION "طريقة CGI البائدة وما يشبهها" [396-911] -->
+<h2><a name="عبر_خادم_python-paste_المنضدد" id="عبر_خادم_python-paste_المنضدد">عبر خادم python-paste المنضدد</a></h2>
+<div class="level2">
+
+<p>
+انظر صفحة <a href="sample1.html" class="wikilink1" title="okasha:sample1">مثال أولي بسيط</a>
+</p>
+
+</div>
+<!-- SECTION "عبر خادم python-paste المنضدد" [912-998] -->
+<h2><a name="عبر_mod_proxy_في_apache" id="عبر_mod_proxy_في_apache">عبر mod_proxy في apache</a></h2>
+<div class="level2">
+
+<p>
+لنفرض أن التطبيق يعمل على خادم paste الضمني على المنفذ 8080 ويستمع فقط للطلبات المحلية على العنوان 127.0.0.1 أي localhost حتى نجعله متوفر عبر خادم apache العام على منفذ 80 يمكننا بكل بساطة أن نضيف ما يلي إلى إعدادات Apache
+
+</p>
+<pre class="code">
+ProxyPass         /myapp  http://localhost:8080/
+ProxyPassReverse  /myapp  http://localhost:8080/
+</pre>
+
+<p>
+وفي هذه الحالة ستحال الطلبات القدمة إلى المنفذ 80 إن كانت  تبدأ ب /myapp إلى <a target="_blank" href="http://localhost:8080/" class="urlextern" title="http://localhost:8080/"  rel="nofollow">http://localhost:8080/</a>
+
+</p>
+<ul>
+<li class="level1"><div class="li"> للمزيد انظر وثائق <a target="_blank" href="http://httpd.apache.org/docs/2.0/mod/mod_proxy.html" class="urlextern" title="http://httpd.apache.org/docs/2.0/mod/mod_proxy.html"  rel="nofollow">mod_proxy</a></div>
+</li>
+</ul>
+
+</div>
+<!-- SECTION "عبر mod_proxy في apache" [999-1776] -->
+<h2><a name="عبر_google_app_engine" id="عبر_google_app_engine">عبر google app engine</a></h2>
+<div class="level2">
+
+<p>
+لنفرض أن لديك تطبيق ويب اسمه test.py يحتوي على فئة اسمها MyWebApp ونريد تشغيله على غوغل apps engine لذا نعمل ملف الذي يشغله وليكن اسمه apptest.py مثلا هكذا:
+</p>
+<pre class="code python"><span class="co1">#! /usr/bin/python</span>
+<span class="co1"># -*- coding: UTF-8 -*-</span>
+<span class="kw1">import</span> <span class="kw3">sys</span>, <span class="kw3">os</span>, <span class="kw3">os</span>.<span class="me1">path</span>
+<span class="kw1">from</span> <span class="kw3">test</span> <span class="kw1">import</span> webApp
+&nbsp;
+<span class="kw1">from</span> google.<span class="me1">appengine</span>.<span class="me1">ext</span> <span class="kw1">import</span> webapp
+<span class="kw1">from</span> google.<span class="me1">appengine</span>.<span class="me1">ext</span>.<span class="me1">webapp</span>.<span class="me1">util</span> <span class="kw1">import</span> run_wsgi_app
+&nbsp;
+d=<span class="kw3">os</span>.<span class="me1">path</span>.<span class="me1">dirname</span><span class="br0">&#40;</span>__file__<span class="br0">&#41;</span>
+application=MyWebApp<span class="br0">&#40;</span>
+    <span class="kw3">os</span>.<span class="me1">path</span>.<span class="me1">join</span><span class="br0">&#40;</span>d, <span class="st0">'templates'</span><span class="br0">&#41;</span>,
+    staticBaseDir=<span class="br0">&#123;</span><span class="st0">'/_files/'</span>:<span class="kw3">os</span>.<span class="me1">path</span>.<span class="me1">join</span><span class="br0">&#40;</span>d, <span class="st0">'files'</span><span class="br0">&#41;</span><span class="br0">&#125;</span>
+<span class="br0">&#41;</span><span class="sy0">;</span>
+run_wsgi_app<span class="br0">&#40;</span>application<span class="br0">&#41;</span></pre>
+
+<p>
+ونعمل ملف app.yaml نخبره أن يحل كل شيء إلى apptest.py هكذا
+
+</p>
+<pre class="file">
+application: okashaTest
+version: 1
+runtime: python
+api_version: 1
+
+handlers:
+- url: .*
+  script: apptest.py
+</pre>
+
+<p>
+بعدها قم بتجربته فإن كان كل شيء على خير ما يرام يمكنك نقل تخديم الملفات الساكنة إلى google apps عوضا عن عكاشة بتعديل الملف app.yaml إلى
+</p>
+<pre class="file">
+application: okashaTest
+version: 1
+runtime: python
+api_version: 1
+
+handlers:
+- url: /_files
+  static_dir: files
+
+- url: .*
+  script: apptest.py
+</pre>
+
+<p>
+<strong>ملاحظة:</strong> لا تستطيع استخدام قوالب formatTemplate لأنها غير متوفرة في بايثون 2.5 بل 2.6.
+</p>
+
+<p>
+<strong>ملاحظة:</strong> عليك تعديل سطرين من كود <a target="_blank" href="http://git.ojuba.org/cgit/okasha/tree/okasha/baseWebApp.py" class="urlextern" title="http://git.ojuba.org/cgit/okasha/tree/okasha/baseWebApp.py"  rel="nofollow">baseWebApp.py</a> عكاشة من <code>except webAppBaseException as e</code> إلى صيغة بايثون القديمة <code>except webAppBaseException, e</code>
+
+</p>
+<ul>
+<li class="level1"><div class="li"> انظر <a target="_blank" href="http://code.google.com/appengine/docs/python/tools/webapp/utilmodule.html#run_wsgi_app" class="urlextern" title="http://code.google.com/appengine/docs/python/tools/webapp/utilmodule.html#run_wsgi_app"  rel="nofollow">google app engine</a></div>
+</li>
+</ul>
+
+</div>
+<!-- SECTION "عبر google app engine" [1777-3582] -->
+<h2><a name="عبر_mod_python_في_خادم_apache" id="عبر_mod_python_في_خادم_apache">عبر mod_python في خادم apache</a></h2>
+<div class="level2">
+
+</div>
+<!-- SECTION "عبر mod_python في خادم apache" [3583-3634] -->
+<h2><a name="عبر_mod_wsgi_في_خادم_apache" id="عبر_mod_wsgi_في_خادم_apache">عبر mod_wsgi في خادم apache</a></h2>
+<div class="level2">
+
+</div>
+<!-- SECTION "عبر mod_wsgi في خادم apache" [3635-3683] -->
+<h3><a name="طريقة_توزيع_الملفات" id="طريقة_توزيع_الملفات">طريقة توزيع الملفات</a></h3>
+<div class="level3">
+
+<p>
+قم بتثبيت إضافة mod_wsgi في خادم أباتشي من مدير الجزم (في أعجوبة اسم الحزم هو mod_wsgi)
+</p>
+
+<p>
+تأكد من تثبيت الحزم التي قد تلزمك مثل python-kid أو python-elixir (هي لا تلزم عكاشة لكن من المفيد استعمالها)
+</p>
+
+<p>
+بعد ذلك قم بإعادة توزيع الملفات بحيث تناسب الخادم فإن كان حسابك على الخادم يعطيك وصول إلى مجلد البيت وكنت تضع ملفاتك هناك ضعها خارج مجلد public_html. كذلك خصص مجلد لتضع فيه ما قد يلزمك من مكتبات بايثون بما فيها وحدة تطبيق الويب الخاص بك مثلا /home/ahmad/pyapps/ ثم اعمل ملف بايثون مهمته الوحيدة تعريف كائن اسمه application من صنف تطبيق الويب الخاص بك. سم ذاك الملف myapp.wsgi
+</p>
+<pre class="code python"><span class="co1"># -*- coding: UTF-8 -*-</span>
+<span class="kw1">import</span> <span class="kw3">sys</span>, <span class="kw3">os</span>, <span class="kw3">os</span>.<span class="me1">path</span>
+prefix=<span class="kw3">os</span>.<span class="me1">path</span>.<span class="me1">expanduser</span><span class="br0">&#40;</span><span class="st0">'~/myapp-files/'</span><span class="br0">&#41;</span>
+pyprefix=<span class="kw3">os</span>.<span class="me1">path</span>.<span class="me1">expanduser</span><span class="br0">&#40;</span><span class="st0">'~/pyapps/'</span><span class="br0">&#41;</span>
+<span class="kw3">sys</span>.<span class="me1">path</span>.<span class="me1">insert</span><span class="br0">&#40;</span>0, pyprefix<span class="br0">&#41;</span>
+<span class="kw1">from</span> myapp <span class="kw1">import</span> MyApp
+application=MyApp<span class="br0">&#40;</span>
+  <span class="kw3">os</span>.<span class="me1">path</span>.<span class="me1">join</span><span class="br0">&#40;</span>prefix,<span class="st0">'templates'</span><span class="br0">&#41;</span>,
+  staticBaseDir=<span class="br0">&#123;</span><span class="st0">'/media/'</span>:<span class="kw3">os</span>.<span class="me1">path</span>.<span class="me1">join</span><span class="br0">&#40;</span>prefix,<span class="st0">'static-files'</span><span class="br0">&#41;</span><span class="br0">&#125;</span>
+  <span class="br0">&#41;</span><span class="sy0">;</span></pre>
+
+<p>
+هذا الملف يحدد /home/ahmad/pyapps/ كمجلد للبحث عن مكتبات بايثون والتي من بينها myapp.py كذلك يحدد المجلد /home/ahmad/myapp-files/ كي يحتوي على القوالب والملفات الساكنة.
+</p>
+
+</div>
+<!-- SECTION "طريقة توزيع الملفات" [3684-5278] -->
+<h3><a name="إعداد_apache" id="إعداد_apache">إعداد apache</a></h3>
+<div class="level3">
+
+<p>
+لنفرض أن لديك خادم وتريد تشغيل التطبيق فيه على جذر نطاق فرعي  sub-domain اسمه myapp.myhost.org عندها تكون الإعدادات كما يلي:
+
+</p>
+<pre class="code xml"><span class="sc3"><span class="re1">&lt;VirtualHost</span> *:80<span class="re2">&gt;</span></span>
+  ServerName myapp.myhost.org
+&nbsp;
+    WSGIDaemonProcess myapp.myhost.org processes=1 threads=15 display-name=myapp user=ahmad group=ahmadgroup
+    WSGIProcessGroup myapp.myhost.org
+&nbsp;
+    WSGIScriptAlias / /home/ahmad/pyapps/myapp.wsgi
+&nbsp;
+<span class="sc3"><span class="re1">&lt;/VirtualHost<span class="re2">&gt;</span></span></span></pre>
+
+<p>
+يمكنك أيضا إلقاء عبئ تحميل الملفات الساكنة على خادم الويب وليس على عكاشة وذلك بإضافة المقطع التالي داخل السابق
+</p>
+<pre class="code xml">    DocumentRoot /home/ahmad/myapp-files/static-files/
+    Alias /favicon.ico /home/ahmad/myapp-files/static-files/favicon.ico
+&nbsp;
+    Alias /media/ /home/ahmad/myapp-files/static-files/
+&nbsp;
+    <span class="sc3"><span class="re1">&lt;Directory</span> /home/ahmad/myapp-files/static-files<span class="re2">&gt;</span></span>
+    Order allow,deny
+    Allow from all
+    <span class="sc3"><span class="re1">&lt;/Directory<span class="re2">&gt;</span></span></span></pre>
+
+</div>
+<!-- SECTION "إعداد apache" [5279-6313] -->
+<h3><a name="خادم_أخرى" id="خادم_أخرى">خادم أخرى</a></h3>
+<div class="level3">
+
+<p>
+من أفضل خوادم WSGI أداءً وتوفيرا في الذاكرة وسرعة الاستجابة
+
+</p>
+<ul>
+<li class="level1"><div class="li"> <a target="_blank" href="http://projects.unbit.it/uwsgi/" class="urlextern" title="http://projects.unbit.it/uwsgi/"  rel="nofollow">uWSGI</a></div>
+</li>
+<li class="level1"><div class="li"> <a target="_blank" href="http://www.gevent.org/" class="urlextern" title="http://www.gevent.org/"  rel="nofollow">gEvent</a></div>
+</li>
+<li class="level1"><div class="li"> <a target="_blank" href="http://wiki.github.com/william-os4y/fapws3/" class="urlextern" title="http://wiki.github.com/william-os4y/fapws3/"  rel="nofollow">FAPWS3</a></div>
+</li>
+</ul>
+
+</div>
+<!-- SECTION "خادم أخرى" [6314-6592] -->
+<h2><a name="تقييم_خوادم_wsgi" id="تقييم_خوادم_wsgi">تقييم خوادم WSGI</a></h2>
+<div class="level2">
+
+<p>
+بعكس ما تتوقع فإن أداء twisted و tornado  كان سئيا جدا في اختبارات الأداء.
+
+</p>
+<ul>
+<li class="level1"><div class="li"> <a target="_blank" href="http://nichol.as/benchmark-of-python-web-servers" class="urlextern" title="http://nichol.as/benchmark-of-python-web-servers"  rel="nofollow">http://nichol.as/benchmark-of-python-web-servers</a></div>
+</li>
+</ul>
+
+</div>
+<!-- SECTION "تقييم خوادم WSGI" [6593-] --></div>
+</body>
+</html>

@@ -1,0 +1,405 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ar"
+ lang="ar" dir="rtl">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>وثائق عكاشة</title>
+<link rel="stylesheet" media="all" type="text/css" href="all.css" />
+<link rel="stylesheet" media="screen" type="text/css" href="screen.css" />
+<link rel="stylesheet" media="print" type="text/css" href="print.css" />
+</head>
+<body>
+<div class="dokuwiki export">
+<!-- TOC START -->
+<div class="toc">
+<div class="tocheader toctoggle" id="toc__header">جدول المحتويات</div>
+<div id="toc__inside">
+
+<ul class="toc">
+<li class="level1"><div class="li"><span class="li"><a href="#القوالب" class="toc">القوالب</a></span></div>
+<ul class="toc">
+<li class="level2"><div class="li"><span class="li"><a href="#قوالب_formattemplate" class="toc">قوالب formatTemplate</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="#قوالب_percenttemplate" class="toc">قوالب percentTemplate</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="#قالب_jsondumps" class="toc">قالب jsonDumps</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="#قوالب_bottle_المتقدمة" class="toc">قوالب bottle المتقدمة</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="#قوالب_kid_المتقدمة" class="toc">قوالب kid المتقدمة</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="#قوالب_xslt" class="toc">قوالب xslt</a></span></div></li>
+</ul>
+</li>
+</div>
+</div>
+<!-- TOC END -->
+
+
+
+<h1><a name="القوالب" id="القوالب">القوالب</a></h1>
+<div class="level1">
+
+<p>
+تحتوي عكاشة على طريقة مرنة لعمل القوالب. حيث كل ما عليك هو تحديد الدالة التي ستسلم كائن بايثون (مصدره قد يكون قاعدة بيانات مثلا) مسؤولية تلك الدالة تحويل الكائن المستلم إلى صفحة ويب. يمكن استخدام كائن قابل للاستدعاء callable object أو نوع منه مكان الدالة حيث يتم إنشاء الكائن تلقائيا مرة واحدة عند تشغيل تطبيق الويب.
+</p>
+
+<p>
+يتم تحديد الدالة عبر @expose
+</p>
+
+</div>
+<!-- SECTION "القوالب" [1-636] -->
+<h2><a name="قوالب_formattemplate" id="قوالب_formattemplate">قوالب formatTemplate</a></h2>
+<div class="level2">
+
+<p>
+هذه الدالة تحتاج تحديد ملف موجود في مجلد القوالب وتستلم قائمة من العناصر أو كائن من نوع قاموس dict. في الحالتين يوضع المعرف (الذي هو المفتاح في القاموس أو الإزاحة في القائمة) بين حاصرتين { }. إليك هذا المثال
+</p>
+<pre class="code python">  @expose<span class="br0">&#40;</span>formatTemplate,<span class="br0">&#91;</span><span class="st0">&quot;hello.html&quot;</span><span class="br0">&#93;</span><span class="br0">&#41;</span>
+  <span class="kw1">def</span> hello<span class="br0">&#40;</span><span class="kw2">self</span>, rq, <span class="sy0">*</span>args<span class="br0">&#41;</span>:
+    n=rq.<span class="me1">q</span>.<span class="me1">getfirst</span><span class="br0">&#40;</span><span class="st0">'n'</span>,<span class="st0">'world'</span><span class="br0">&#41;</span>.<span class="me1">decode</span><span class="br0">&#40;</span><span class="st0">'utf-8'</span><span class="br0">&#41;</span>
+    <span class="kw1">return</span> <span class="br0">&#123;</span><span class="st0">&quot;name&quot;</span>:n<span class="br0">&#125;</span></pre>
+
+<p>
+ويمكن أن تكون محتويات القالب كأي ملف <acronym title="HyperText Markup Language">HTML</acronym> هكذا:
+
+</p>
+<pre class="code html4strict"><span class="sc2">&lt;<a target="_blank" href="http://december.com/html/4/element/html.html"><span class="kw2">html</span></a>&gt;&lt;<a target="_blank" href="http://december.com/html/4/element/body.html"><span class="kw2">body</span></a>&gt;</span>
+<span class="sc2">&lt;<a target="_blank" href="http://december.com/html/4/element/h1.html"><span class="kw2">h1</span></a>&gt;</span>Hello, {name}!<span class="sc2">&lt;<span class="sy0">/</span><a target="_blank" href="http://december.com/html/4/element/h1.html"><span class="kw2">h1</span></a>&gt;</span>
+<span class="sc2">&lt;<a target="_blank" href="http://december.com/html/4/element/form.html"><span class="kw2">form</span></a> <span class="kw3">name</span><span class="sy0">=</span><span class="st0">&quot;MyForm&quot;</span>&gt;</span>
+Please enter name:
+<span class="sc2">&lt;<a target="_blank" href="http://december.com/html/4/element/input.html"><span class="kw2">input</span></a> <span class="kw3">name</span><span class="sy0">=</span><span class="st0">&quot;n&quot;</span> <span class="kw3">type</span><span class="sy0">=</span><span class="st0">&quot;text&quot;</span> <span class="kw3">value</span><span class="sy0">=</span><span class="st0">&quot;{name}&quot;</span>&gt;&lt;<span class="sy0">/</span><a target="_blank" href="http://december.com/html/4/element/input.html"><span class="kw2">input</span></a>&gt;</span>
+<span class="sc2">&lt;<span class="sy0">/</span><a target="_blank" href="http://december.com/html/4/element/form.html"><span class="kw2">form</span></a>&gt;</span>
+<span class="sc2">&lt;<span class="sy0">/</span><a target="_blank" href="http://december.com/html/4/element/body.html"><span class="kw2">body</span></a>&gt;&lt;<span class="sy0">/</span><a target="_blank" href="http://december.com/html/4/element/html.html"><span class="kw2">html</span></a>&gt;</span></pre>
+
+<p>
+
+حيث سيتم تعويض قيم مفاتيح القاموس (وهي هنا name) مكان {name}
+</p>
+
+<p>
+إن كنا أعدنا قائمة فإننا نستخدم الإزاحة هكذا {0} أي العنصر الأول و {1} أي العنصر الثاني.
+</p>
+
+<p>
+توفر هذه الدالة الكثير من طرق التنسيق مثلا
+
+</p>
+<pre class="code">
+&lt;tt&gt;{balance:.3f}&lt;/tt&gt;
+</pre>
+
+<p>
+هذه الطريقة مفيدة جدا إلا أنه يعيبها
+</p>
+<ul>
+<li class="level1"><div class="li"> أنها لا تحتوي على حلقات تكرارية loops</div>
+</li>
+<li class="level1"><div class="li"> مزعجة عندما يحتوي كود <acronym title="HyperText Markup Language">HTML</acronym> على دوال جافاسكربت لأنه عليك تكرار الحاصرات</div>
+</li>
+</ul>
+
+<p>
+
+للمزيد انظر وثائق بايثون عن هذه الصيغة
+
+</p>
+<ul>
+<li class="level1"><div class="li"> للمزيد انظر صياغة أنماط بايثون الجديدة وقوالبه <a target="_blank" href="http://docs.python.org/library/string.html#formatstrings" class="urlextern" title="http://docs.python.org/library/string.html#formatstrings"  rel="nofollow">http://docs.python.org/library/string.html#formatstrings</a></div>
+</li>
+</ul>
+
+</div>
+<!-- SECTION "قوالب formatTemplate" [637-2320] -->
+<h2><a name="قوالب_percenttemplate" id="قوالب_percenttemplate">قوالب percentTemplate</a></h2>
+<div class="level2">
+
+<p>
+هذه الدالة تحتاج تحديد ملف موجود في مجلد القوالب وتستلم كائن من نوع قاموس dict مفاتيحه تستخدم كي يتم تعويض قيمها في القالب. إليك هذا المثال
+</p>
+<pre class="code python">  @expose<span class="br0">&#40;</span>percentTemplate,<span class="br0">&#91;</span><span class="st0">&quot;hello.html&quot;</span><span class="br0">&#93;</span><span class="br0">&#41;</span>
+  <span class="kw1">def</span> hello<span class="br0">&#40;</span><span class="kw2">self</span>, rq, <span class="sy0">*</span>args<span class="br0">&#41;</span>:
+    n=rq.<span class="me1">q</span>.<span class="me1">getfirst</span><span class="br0">&#40;</span><span class="st0">'n'</span>,<span class="st0">'world'</span><span class="br0">&#41;</span>.<span class="me1">decode</span><span class="br0">&#40;</span><span class="st0">'utf-8'</span><span class="br0">&#41;</span>
+    <span class="kw1">return</span> <span class="br0">&#123;</span><span class="st0">&quot;n&quot;</span>:n<span class="br0">&#125;</span></pre>
+
+<p>
+ويمكن أن تكون محتويات القالب كأي ملف <acronym title="HyperText Markup Language">HTML</acronym> هكذا:
+
+</p>
+<pre class="code html4strict"><span class="sc2">&lt;<a target="_blank" href="http://december.com/html/4/element/html.html"><span class="kw2">html</span></a>&gt;&lt;<a target="_blank" href="http://december.com/html/4/element/body.html"><span class="kw2">body</span></a>&gt;</span>
+<span class="sc2">&lt;<a target="_blank" href="http://december.com/html/4/element/h1.html"><span class="kw2">h1</span></a>&gt;</span>Hello, %(n)s!<span class="sc2">&lt;<span class="sy0">/</span><a target="_blank" href="http://december.com/html/4/element/h1.html"><span class="kw2">h1</span></a>&gt;</span>
+<span class="sc2">&lt;<a target="_blank" href="http://december.com/html/4/element/form.html"><span class="kw2">form</span></a> <span class="kw3">name</span><span class="sy0">=</span><span class="st0">&quot;MyForm&quot;</span>&gt;</span>
+Please enter name:
+<span class="sc2">&lt;<a target="_blank" href="http://december.com/html/4/element/input.html"><span class="kw2">input</span></a> <span class="kw3">name</span><span class="sy0">=</span><span class="st0">&quot;n&quot;</span> <span class="kw3">type</span><span class="sy0">=</span><span class="st0">&quot;text&quot;</span> <span class="kw3">value</span><span class="sy0">=</span><span class="st0">&quot;%(n)s&quot;</span>&gt;&lt;<span class="sy0">/</span><a target="_blank" href="http://december.com/html/4/element/input.html"><span class="kw2">input</span></a>&gt;</span>
+<span class="sc2">&lt;<span class="sy0">/</span><a target="_blank" href="http://december.com/html/4/element/form.html"><span class="kw2">form</span></a>&gt;</span>
+<span class="sc2">&lt;<span class="sy0">/</span><a target="_blank" href="http://december.com/html/4/element/body.html"><span class="kw2">body</span></a>&gt;&lt;<span class="sy0">/</span><a target="_blank" href="http://december.com/html/4/element/html.html"><span class="kw2">html</span></a>&gt;</span></pre>
+
+<p>
+
+حيث سيتم تعويض قيم مفاتيح القاموس (وهي هنا n) مكان %(n)s
+والصيغة بكل بساطة تشبه printf وهي % ثم اسم المفتاح بين قوسين ثم رمز نوعه (غالبا s) ويجب الانتباه إلا أنه إن احتجت إلى % كما هي اكتب 
+
+وهذه الطريقة كسابقتها يعيبها أنها لا تحتوي على حلقات تكرارية loops
+إلا أنها لا تكون مزعجة عندما يكون هناك داول javascript داخل كود html
+لكنها مزعجة عندما يكون هناك علامة % المستخدمة في سمات CSS حيث يجب أن تكتب 
+</p>
+
+<p>
+للمزيد انظر وثائق بايثون عن هذه الصيغة
+
+</p>
+<ul>
+<li class="level1"><div class="li"> <a target="_blank" href="http://docs.python.org/library/stdtypes.html#string-formatting" class="urlextern" title="http://docs.python.org/library/stdtypes.html#string-formatting"  rel="nofollow">http://docs.python.org/library/stdtypes.html#string-formatting</a></div>
+</li>
+</ul>
+
+</div>
+<!-- SECTION "قوالب percentTemplate" [2321-3851] -->
+<h2><a name="قالب_jsondumps" id="قالب_jsondumps">قالب jsonDumps</a></h2>
+<div class="level2">
+
+<p>
+في تطبيقات ويب 2.0 قد يلزمك إرسال بيانات عبر <acronym title="Asynchronous JavaScript and XML">AJAX</acronym>. إن أفضل طريقة للقيام بذلك هي عبر هيئة JSON وهي نص عبارة عن كود بلغة جافاسكربت يتم إرساله للطرف الآخر. يمنك تحويل أي كائن بايثوني إلى نص JSON عبر هذا القالب مهما كان معقدا يعني لو كان عندك منظومة array عناصرها قواميس dicts قيمها منظومة عناصرها منظومات …إلخ.
+</p>
+
+<p>
+في هذا المثال فإن كود بايثون التالي يعيد منظومة بها 3 عناصر نصية
+</p>
+<pre class="code python">  @expose<span class="br0">&#40;</span>jsonDumps<span class="br0">&#41;</span>
+  <span class="kw1">def</span> <span class="kw3">array</span><span class="br0">&#40;</span><span class="kw2">self</span>, rq, <span class="sy0">*</span>args<span class="br0">&#41;</span>:
+    <span class="kw1">return</span> <span class="br0">&#91;</span><span class="st0">&quot;one&quot;</span>,<span class="st0">&quot;two&quot;</span>,<span class="st0">&quot;three&quot;</span><span class="br0">&#93;</span></pre>
+
+<p>
+
+أما الكود التالي فيرسل قاموس (في جافاسكربت يصبح associated array) مفتاحاه الاسم name والوظيفة job
+</p>
+<pre class="code python">  @expose<span class="br0">&#40;</span>jsonDumps<span class="br0">&#41;</span>
+  <span class="kw1">def</span> <span class="kw3">array</span><span class="br0">&#40;</span><span class="kw2">self</span>, rq, <span class="sy0">*</span>args<span class="br0">&#41;</span>:
+    <span class="kw1">return</span> <span class="br0">&#123;</span><span class="st0">&quot;name&quot;</span>:<span class="st0">&quot;Ahmad&quot;</span>,<span class="st0">&quot;job&quot;</span>:<span class="st0">&quot;Manager&quot;</span><span class="br0">&#125;</span></pre>
+
+<p>
+في جافاسكربت إن استلمت هذا الكائن تحت اسم d فإن القيم ستكون d.name و d.job
+</p>
+
+</div>
+<!-- SECTION "قالب jsonDumps" [3852-5037] -->
+<h2><a name="قوالب_bottle_المتقدمة" id="قوالب_bottle_المتقدمة">قوالب bottle المتقدمة</a></h2>
+<div class="level2">
+
+<p>
+إن كنت بحاجة إلى جمل شرطية أو حلقات تكرارية أو تنفيذ أي كود بايثون أو حتى تسريع للقالب عبر عمل نسخة خبيئة مكونة من python byte code  فإن هذا القالب هو ما تبحث عنه
+</p>
+
+<p>
+<p><div class="notetip">لا يحتاج هذا القالب أي اعتماديات خارجية ويوفر العديد من المزايا المتقدمة على بساطته
+</div></p>
+</p>
+
+<p>
+في هذا القالب تستطيع وضع أي تعبير بايثوني (على أن يعيد نص أو عدة نصوص) بين حاصرتين مزدوجتين هكذا:
+
+</p>
+<pre class="code">
+Hello, {{name}}!
+</pre>
+
+<p>
+
+هنا سيتم تعويض قيمة name بعد Hello.
+والتي قد تعطي شيء يشبه
+</p>
+<pre class="code">
+Hello, Ali!
+</pre>
+
+<p>
+يمكن استخدام تعابير أعقد مثل
+
+</p>
+<pre class="code">
+Hello, {{user.get_name() if user else &quot;world&quot;}}!
+</pre>
+
+<p>
+
+هذا التعبير البايثوني يعني إن كان الكائن user معرفا فإنه يستدعي الطريقة user.get_name وإلا فإنه يساوي الثابت “world”
+</p>
+
+<p>
+كذلك يعمل على تخطي العلامة الخاصة ب html حتى تظهر بالشكل الصحيح. مثلا إن كانت القيمة مثلا &lt;a&gt; فإنه سيحوله إلى &amp;lt;a&amp;gt;  حتى يظهر في <acronym title="HyperText Markup Language">HTML</acronym> كما هو فإن كنت تريده أن يظهر دون تخطي ضع ! بعد فتح الحاصرتين.
+
+</p>
+<pre class="code">
+Hello, {{!name}}!
+</pre>
+
+<p>
+يمكنك استخدام عبارات &#039;if&#039;  و &#039;elif&#039; و &#039;else&#039; و &#039;try&#039; و &#039;except&#039; و &#039;finally&#039; و &#039;for&#039; و &#039;while&#039; و &#039;with&#039; و &#039;def&#039; و &#039;class&#039; لكن على أن تبدأها ب % وأن لا يسبقها إلا مسافات وعلى أن تنهيها ب %end وذلك عوضا عن المسافات البادئة في بايثون مثلا يمكنك أن تعمل ما يشبه
+
+</p>
+<pre class="code html4strict"><span class="sc2">&lt;<a target="_blank" href="http://december.com/html/4/element/html.html"><span class="kw2">html</span></a>&gt;</span>
+ <span class="sc2">&lt;<a target="_blank" href="http://december.com/html/4/element/head.html"><span class="kw2">head</span></a>&gt;</span>
+  <span class="sc2">&lt;<a target="_blank" href="http://december.com/html/4/element/title.html"><span class="kw2">title</span></a>&gt;</span>{{title}}<span class="sc2">&lt;<span class="sy0">/</span><a target="_blank" href="http://december.com/html/4/element/title.html"><span class="kw2">title</span></a>&gt;</span>
+ <span class="sc2">&lt;<span class="sy0">/</span><a target="_blank" href="http://december.com/html/4/element/head.html"><span class="kw2">head</span></a>&gt;</span>
+ <span class="sc2">&lt;<a target="_blank" href="http://december.com/html/4/element/body.html"><span class="kw2">body</span></a>&gt;</span>
+  %if colors:
+  %for c in colors:
+    <span class="sc2">&lt;<a target="_blank" href="http://december.com/html/4/element/p.html"><span class="kw2">p</span></a>&gt;</span>I like <span class="sc2">&lt;<a target="_blank" href="http://december.com/html/4/element/strong.html"><span class="kw2">strong</span></a>&gt;</span>{{c}}<span class="sc2">&lt;<span class="sy0">/</span><a target="_blank" href="http://december.com/html/4/element/strong.html"><span class="kw2">strong</span></a>&gt;</span> apple<span class="sc2">&lt;<span class="sy0">/</span><a target="_blank" href="http://december.com/html/4/element/p.html"><span class="kw2">p</span></a>&gt;</span>
+  %end
+  %else:
+    <span class="sc2">&lt;<a target="_blank" href="http://december.com/html/4/element/p.html"><span class="kw2">p</span></a>&gt;</span>no color is provided<span class="sc2">&lt;<span class="sy0">/</span><a target="_blank" href="http://december.com/html/4/element/p.html"><span class="kw2">p</span></a>&gt;</span>
+  %end
+  <span class="sc2">&lt;<a target="_blank" href="http://december.com/html/4/element/p.html"><span class="kw2">p</span></a>&gt;</span>for more details on this template visit <span class="sc2">&lt;<a target="_blank" href="http://december.com/html/4/element/a.html"><span class="kw2">a</span></a> <span class="kw3">href</span><span class="sy0">=</span><span class="st0">&quot;http://bottle.paws.de/docs/dev/stpl.html&quot;</span>&gt;</span>Bottle Docs<span class="sc2">&lt;<span class="sy0">/</span><a target="_blank" href="http://december.com/html/4/element/a.html"><span class="kw2">a</span></a>&gt;&lt;<span class="sy0">/</span><a target="_blank" href="http://december.com/html/4/element/p.html"><span class="kw2">p</span></a>&gt;</span>
+ <span class="sc2">&lt;<span class="sy0">/</span><a target="_blank" href="http://december.com/html/4/element/body.html"><span class="kw2">body</span></a>&gt;</span>
+<span class="sc2">&lt;<span class="sy0">/</span><a target="_blank" href="http://december.com/html/4/element/html.html"><span class="kw2">html</span></a>&gt;</span></pre>
+
+<p>
+كذلك يمكنك احتواء قالب آخر عبر %include ثم اسم الملف دون .tpl ثم إن شئت معاملات معرف = قيمة فاصلة معرف = قيمة وهكذا أو حتى ** ثم كائن dict
+</p>
+
+<p>
+والأجمل من ذلك هو عمل قالب يحتوي عبارة %include دون أي معاملات في وسطه وفي ملف آخر يبدأ أو ينتهي بعملية %rebase متبوعة اسم ذاك القالب الأول (مع معاملات إن شئت) وعند استعمال الثاني سيتم معالجة القالب ثم حشره ناتجه في وسط الأول مكان كلمة %include
+</p>
+
+<p>
+مثلا يكون عندك ملف layout.tpl يحتوي على كود html وكلمة %include في وسطه مثلا
+
+</p>
+<pre class="code html4strict"><span class="sc2">&lt;<a target="_blank" href="http://december.com/html/4/element/html.html"><span class="kw2">html</span></a>&gt;</span>
+<span class="sc2">&lt;<a target="_blank" href="http://december.com/html/4/element/head.html"><span class="kw2">head</span></a>&gt;</span>
+  <span class="sc2">&lt;<a target="_blank" href="http://december.com/html/4/element/title.html"><span class="kw2">title</span></a>&gt;</span>{{title or 'No title'}}<span class="sc2">&lt;<span class="sy0">/</span><a target="_blank" href="http://december.com/html/4/element/title.html"><span class="kw2">title</span></a>&gt;</span>
+<span class="sc2">&lt;<span class="sy0">/</span><a target="_blank" href="http://december.com/html/4/element/head.html"><span class="kw2">head</span></a>&gt;</span>
+<span class="sc2">&lt;<a target="_blank" href="http://december.com/html/4/element/body.html"><span class="kw2">body</span></a>&gt;</span>
+<span class="sc2">&lt;<a target="_blank" href="http://december.com/html/4/element/div.html"><span class="kw2">div</span></a> <span class="kw3">class</span><span class="sy0">=</span><span class="st0">&quot;sidepane_block&quot;</span> <span class="kw3">style</span><span class="sy0">=</span><span class="st0">&quot;width: 50%; float:right;&quot;</span>&gt;</span>
+{{sidepane()}}
+<span class="sc2">&lt;<span class="sy0">/</span><a target="_blank" href="http://december.com/html/4/element/div.html"><span class="kw2">div</span></a>&gt;</span>
+<span class="sc2">&lt;<a target="_blank" href="http://december.com/html/4/element/div.html"><span class="kw2">div</span></a> <span class="kw3">class</span><span class="sy0">=</span><span class="st0">&quot;content_block&quot;</span>&gt;</span>
+  %include
+<span class="sc2">&lt;<span class="sy0">/</span><a target="_blank" href="http://december.com/html/4/element/div.html"><span class="kw2">div</span></a>&gt;</span>
+<span class="sc2">&lt;<span class="sy0">/</span><a target="_blank" href="http://december.com/html/4/element/body.html"><span class="kw2">body</span></a>&gt;</span>
+<span class="sc2">&lt;<span class="sy0">/</span><a target="_blank" href="http://december.com/html/4/element/html.html"><span class="kw2">html</span></a>&gt;</span></pre>
+
+<p>
+وفي ملف آخر نعمل
+
+</p>
+<pre class="code html4strict">%def sidepane():
+this will go on side box
+%end
+This is the page content: {{content}}
+%rebase layout title='Content Title' sidepane=sidepane</pre>
+
+<p>
+علما أنه يمكن %rebase أكثر من مرة.
+</p>
+
+<p>
+<p><div class="noteclassic">هذا القالب مستعار من إطار الويب <a target="_blank" href="http://bottle.paws.de/" class="urlextern" title="http://bottle.paws.de/"  rel="nofollow">bottle</a> وهو وفق رخصة <acronym title="Massachusetts Institute of Technology">MIT</acronym> الحرة المتساهلة 
+للمزيد من المعلومات راجع <a target="_blank" href="http://bottle.paws.de/docs/dev/stpl.html" class="urlextern" title="http://bottle.paws.de/docs/dev/stpl.html"  rel="nofollow">وثائق قالب bottle</a>
+
+</div></p>
+</p>
+
+</div>
+<!-- SECTION "قوالب bottle المتقدمة" [5038-8815] -->
+<h2><a name="قوالب_kid_المتقدمة" id="قوالب_kid_المتقدمة">قوالب kid المتقدمة</a></h2>
+<div class="level2">
+
+<p>
+إن كنت تريد قوالب تجمع بين بايثون و xml أو xhtml فعليك ب kid وهي حزمة متخصص في هذه الأشياء (اسمها في فيدورا هو python-kid).
+</p>
+
+<p>
+<p><div class="noteimportant">إلى جانب حزمة python-okasha-kid التي هي جزء من عكاشة فإن هذا القالب بحاجة لحزمة خارجية وهي python-kid ولن يعمل إن لم تكن تلك الحزمة مثبتة.
+</div></p>
+</p>
+
+<p>
+وتستخدم كما في المثال المرفق مع عكاشة <a target="_blank" href="http://git.ojuba.org/cgit/okasha/tree/test.py" class="urlextern" title="http://git.ojuba.org/cgit/okasha/tree/test.py"  rel="nofollow">test.py</a> هكذا:
+</p>
+<pre class="code python"><span class="kw1">from</span> okasha.<span class="me1">kidTemplate</span> <span class="kw1">import</span> kidTemplate
+  @expose<span class="br0">&#40;</span>kidTemplate,<span class="br0">&#91;</span><span class="st0">&quot;kidtest.kid&quot;</span><span class="br0">&#93;</span><span class="br0">&#41;</span>
+  <span class="kw1">def</span> kidtmp<span class="br0">&#40;</span><span class="kw2">self</span>, rq, <span class="sy0">*</span>args<span class="br0">&#41;</span>:
+    <span class="kw1">return</span> <span class="br0">&#123;</span>
+      <span class="st0">'h1'</span>:<span class="st0">'this is how kid templates works'</span>,
+      <span class="st0">'ls'</span>:<span class="br0">&#91;</span><span class="st0">'apple'</span>,<span class="st0">'banana'</span>,<span class="st0">'orange'</span>,<span class="st0">'tomato'</span><span class="br0">&#93;</span>
+      <span class="br0">&#125;</span></pre>
+
+<p>
+
+حيث هنا كما في percentTemplate نعيد قاموس لكن ليس بالضرورة أن تكون قيمه نصوصا حيث يمكن أن تكون القيم منظومة array كما في ls
+</p>
+
+<p>
+أما ملف القالب <a target="_blank" href="http://git.ojuba.org/cgit/okasha/tree/templates/kidtest.kid" class="urlextern" title="http://git.ojuba.org/cgit/okasha/tree/templates/kidtest.kid"  rel="nofollow">kidtest.kid</a> فهو xml يحتوي على تعويض قيم وحلقات بل وأكود بلغة بايثون
+</p>
+
+<p>
+لاحظ كيف استدعينا بايثون كما نفعل مع php هكذا
+
+</p>
+<pre class="code">
+&lt;?python
+import time
+title = &quot;A Kid Template&quot;
+?&gt;
+</pre>
+
+<p>
+
+كذلك لاحظ كيف قمنا بتعويض القيم في هذا السطر
+
+</p>
+<pre class="code xml"><span class="sc3"><span class="re1">&lt;title</span> <span class="re0">py:content</span>=<span class="st0">&quot;title&quot;</span><span class="re2">&gt;</span></span></pre>
+
+<p>
+
+وفي هذا السطر
+
+</p>
+<pre class="code xml"><span class="sc3"><span class="re1">&lt;h1</span> <span class="re0">py:content</span>=<span class="st0">&quot;h1&quot;</span><span class="re2">&gt;</span></span>title goes here<span class="sc3"><span class="re1">&lt;/h1<span class="re2">&gt;</span></span></span></pre>
+
+<p>
+والأجمل هو الحلقات التكرارية كما في
+
+</p>
+<pre class="code xml"><span class="sc3"><span class="re1">&lt;ul<span class="re2">&gt;</span></span></span>
+    <span class="sc3"><span class="re1">&lt;li</span> <span class="re0">py:for</span>=<span class="st0">&quot;fruit in ls&quot;</span><span class="re2">&gt;</span></span>I like ${fruit}s<span class="sc3"><span class="re1">&lt;/li<span class="re2">&gt;</span></span></span>
+<span class="sc3"><span class="re1">&lt;/ul<span class="re2">&gt;</span></span></span></pre>
+
+<p>
+سيقوم kid بتحويل الملف kidtest.kid إلى وحدة بايثونية مصنفة kidtest.pyc وسيتم عمل خبيئة منها cache مما يعني أنه عليك إعادة تشغيل التطبيق عند تعديل القالب.
+</p>
+
+<p>
+للمزيد انظر وثائق kid
+</p>
+<ul>
+<li class="level1"><div class="li"> <a target="_blank" href="http://www.kid-templating.org/language.html" class="urlextern" title="http://www.kid-templating.org/language.html"  rel="nofollow">http://www.kid-templating.org/language.html</a></div>
+</li>
+</ul>
+
+</div>
+<!-- SECTION "قوالب kid المتقدمة" [8816-10945] -->
+<h2><a name="قوالب_xslt" id="قوالب_xslt">قوالب xslt</a></h2>
+<div class="level2">
+
+<p>
+قالب xsltTemplate لتحويل أي كود xml إلى أي كود xml آخر مثل xhtml بواسطة ملف xsl
+</p>
+
+<p>
+<p><div class="noteimportant">إلى جانب حزمة python-okasha-xslt التي هي جزء من عكاشة فإن هذا القالب بحاجة لحزمة خارجية وهي python-lxml ولن يعمل إن لم تكن تلك الحزمة مثبتة.
+</div></p>
+</p>
+<ul>
+<li class="level1"><div class="li"> <a target="_blank" href="http://www.ojuba.org/wiki/news/14310407-okasha-xslt" class="urlextern" title="http://www.ojuba.org/wiki/news/14310407-okasha-xslt"  rel="nofollow">http://www.ojuba.org/wiki/news/14310407-okasha-xslt</a></div>
+</li>
+</ul>
+
+<p>
+
+سأكتب المزيد عنها
+</p>
+
+</div>
+<!-- SECTION "قوالب xslt" [10946-] --></div>
+</body>
+</html>
