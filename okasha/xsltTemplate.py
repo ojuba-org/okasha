@@ -28,10 +28,7 @@ def xsltTemplate(rq, o, bfn=None, **kw):
   """
   
   """
-  d=rq.webapp._templatesDir
-  if not os.path.isdir(d): raise fileNotFoundException()
-  if not bfn: bfn='root.xsl'
-  fn=os.path.join(d, bfn)
+  fn=rq.webapp._getTemplateFile(bfn, default="root.xsl")
   # prepare xsl trans
   trans=xsltCache.get(fn)
   if not trans:

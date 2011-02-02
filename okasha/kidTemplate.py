@@ -22,10 +22,7 @@ from baseWebApp import fileNotFoundException
 #from utils import ObjectsCache # kid has its own cache
 
 def kidTemplate(rq, o, bfn=None, **kw):
-  d=rq.webapp._templatesDir
-  if not os.path.isdir(d): raise fileNotFoundException()
-  if not bfn: bfn='root.kid'
-  fn=os.path.join(d, bfn)
+  fn=rq.webapp._getTemplateFile(bfn, default="root.kid")
   try: tmp=kid.load_template(file=fn)
   except kid.template_util.TemplateNotFound: raise fileNotFoundException()
   except:

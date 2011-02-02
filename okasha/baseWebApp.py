@@ -263,10 +263,7 @@ def formatTemplate(rq, v, bfn=None):
   """
   see http://docs.python.org/library/string.html#format-string-syntax
   """
-  d=rq.webapp._templatesDir
-  if not os.path.isdir(d): raise fileNotFoundException()
-  if not bfn: bfn='root.html'
-  fn=os.path.join(d, bfn)
+  fn=rq.webapp._getTemplateFile(bfn)
   try: tmp=open(fn,'r').read().decode('utf-8')
   except IOError: raise fileNotFoundException()
   except:
@@ -286,10 +283,7 @@ def percentTemplate(rq, v, bfn=None):
   """
   see http://docs.python.org/library/stdtypes.html#string-formatting-operations
   """
-  d=rq.webapp._templatesDir
-  if not os.path.isdir(d): raise fileNotFoundException()
-  if not bfn: bfn='root.html'
-  fn=os.path.join(d, bfn)
+  fn=rq.webapp._getTemplateFile(bfn)
   try: tmp=open(fn,'r').read().decode('utf-8')
   except IOError: raise fileNotFoundException()
   except:
@@ -360,6 +354,16 @@ class baseWebApp:
     self._redirectBaseUrlsKeys=self._redirectBaseUrls.keys()
     self._redirectBaseUrlsKeys.sort()
     self._redirectBaseUrlsKeys.reverse()
+
+  def _getTemplateFile(self, fn, default="root.html"):
+    if fn==None: fn=default
+    if hasattr(self._templatesDir, '__iter__'):
+      for i in self._templatesDir:
+        tfn=os.path.join(self._templatesDir, fn)
+        if os.path.isfile(tfn): return tfn
+    else:
+      return os.path.join(self._templatesDir, fn)
+    raise fileNotFoundException()
 
   def _tailingOsSlash(self, s):
     if not s.endswith(os.sep): return s+os.sep

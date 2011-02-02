@@ -29,10 +29,10 @@ class bottleTemplate(object):
     self._tmp=None
 
   def _load(self, rq, bfn=None, **kw):
-    d=rq.webapp._templatesDir
-    if not os.path.isdir(d): raise fileNotFoundException()
+    if hasattr(rq.webapp._templatesDir, '__iter__'): d=rq.webapp._templatesDir
+    else: d=[rq.webapp._templatesDir]
     if not bfn: bfn='root.tpl'
-    try: self._tmp=SimpleTemplate(name=bfn, lookup=[d])
+    try: self._tmp=SimpleTemplate(name=bfn, lookup=d)
     except:
       rq.webapp._logger.debug('template error fn=[%s]' % bfn)
       raise
