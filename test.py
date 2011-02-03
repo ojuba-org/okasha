@@ -19,8 +19,7 @@ Copyright © 2009, Muayyad Alsadi <alsadi@ojuba.org>
 """
 
 from okasha.baseWebApp import *
-#from okasha.kidTemplate import kidTemplate
-kidTemplate=lambda d:d
+from okasha.kidTemplate import kidTemplate
 from okasha.xsltTemplate import xsltTemplate
 from okasha.bottleTemplate import bottleTemplate
 
