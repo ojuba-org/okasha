@@ -77,6 +77,16 @@ You query is [%s]
     """
     return """<html><body>
 <h1>welcome to Okasha</h1>
+<div style="width:300px;float:right">
+classic logo
+<img src="%(script)s/_files/logo.png" />
+<hr/>
+logo from custom theme
+<img src="%(script)s/_theme/logo.png" />
+<hr/>
+file only found in base theme
+<img src="%(script)s/_theme/logo.gif" />
+</div>
 You requested [<strong>%(u)s</strong>] which is not handled by any method<br/>
 You query is [<strong>%(q)s</strong>]<br/>
 <h2>try out the following</h2>
@@ -285,8 +295,8 @@ if __name__ == '__main__':
     d=os.path.dirname(sys.argv[0])
     app=webApp(
       'SafeMode',
-      os.path.join(d,'templates'),
-      staticBaseDir={'/_files/':os.path.join(d,'files')},
+      [os.path.join(d,'demo-themes/fancy'), os.path.join(d,'demo-themes/default')], '/_theme/',
+      staticBaseDir={'/_files/':os.path.join(d,'demo-themes/default/static/')},
       logger=myLogger
     );
     # for options see http://pythonpaste.org/modules/httpserver.html

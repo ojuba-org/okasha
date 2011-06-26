@@ -320,7 +320,7 @@ class baseWebApp:
     'jpg': 'image/jpeg', 'jpeg': 'image/jpeg'
   }
 
-  def __init__(self, templatesDir, staticBaseDir={}, redirectBaseUrls={}, logger=fakeLogger(), max_files_count=-1, debug=False):
+  def __init__(self, themesDir, themePrefix='/theme/', staticBaseDir={}, redirectBaseUrls={}, logger=fakeLogger(), max_files_count=-1, debug=False):
     """
     staticBaseDirs: a dictionary of prefixes and corresponding directories for serving static content
     redirectBaseUrls: just like staticBaseDirs, but redirect to this BaseUrls instead of surving them
@@ -333,9 +333,12 @@ class baseWebApp:
     """
     self._logger=logger
     # TODO: add a self._templateFilesCache
-    self._templatesDir=templatesDir
+    if not hasattr(themesDir, '__iter__'): themesDir=[themesDir]
+    self._themesDir=map(os.path.abspath, themesDir)
+    self._templatesDir=map(lambda s: s+'/templates/', themesDir)
     # TODO: add a self._staticFilesCache
     self._staticBaseDir={}
+    self._themePrefix=themePrefix
     self._max_files_count=max_files_count
     self._debug=debug # FIXME: no longer needed
     for k in staticBaseDir:
@@ -359,7 +362,7 @@ class baseWebApp:
     if fn==None: fn=default
     if hasattr(self._templatesDir, '__iter__'):
       for i in self._templatesDir:
-        tfn=os.path.join(self._templatesDir, fn)
+        tfn=os.path.join(i, fn)
         if os.path.isfile(tfn): return tfn
     else:
       return os.path.join(self._templatesDir, fn)
@@ -403,6 +406,19 @@ class baseWebApp:
 #    if not rq.uri: return ('File was not found',)
 #    return ('File [%s] was not found' % rq.uri,)
 
+  def __serveTheme(self, rq):
+    """
+    internal method to serve themed static files like png, css,js  ...etc.
+    """
+    fn=rq.uri[len(self._themePrefix):]
+    if os.sep!='/': fn=fn.replace('/', os.sep)
+    for i in self._themesDir:
+      ffn=os.path.join(i, 'static', fn)
+      if not os.path.abspath(ffn).startswith(i):
+        return self._handleException(rq, forbiddenException())
+      if os.path.exists(ffn): return self.__serveStatic(rq, ffn)
+    return self._handleException(rq, notModifiedException() )
+
   def __serveStatic(self, rq, fn):
     """
     internal method to serve static files like png, css,js  ...etc.
@@ -432,6 +448,10 @@ class baseWebApp:
     self._logger.info('got request for uri=[%s] from ip=[%s]' % (rq.uri,rq.environ.get('REMOTE_ADDR','unkown')))
     self._logger.debug('got env=[%s]' % rq.environ)
     rq.q._ok_max_files_count=self._max_files_count
+    if rq.uri.startswith(self._themePrefix):
+      try: return self.__serveTheme(rq)
+      except webAppBaseException as e:
+        return self._handleException(rq, e)
     # check if we need to serve static content
     for k in self._staticBaseDirKeys:
       if rq.uri.startswith(k):
