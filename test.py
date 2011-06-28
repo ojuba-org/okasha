@@ -23,6 +23,8 @@ from okasha.kidTemplate import kidTemplate
 from okasha.xsltTemplate import xsltTemplate
 from okasha.bottleTemplate import bottleTemplate
 
+from glob import glob
+
 class webApp(baseWebApp):
   def __init__(self, mode,*args, **kw):
     """
@@ -292,10 +294,11 @@ if __name__ == '__main__':
     myLogger.addHandler(h)
     myLogger.setLevel(logging.DEBUG) # in production use logging.INFO
     
-    d=os.path.dirname(sys.argv[0])
+    d=os.path.abspath(os.path.dirname(sys.argv[0]))
+    lookup=[os.path.join(d,'demo-themes')]
     app=webApp(
       'SafeMode',
-      [os.path.join(d,'demo-themes/fancy'), os.path.join(d,'demo-themes/default')], '/_theme/',
+      get_theme_dirs(lookup, 'fancy'), '/_theme/',
       staticBaseDir={'/_files/':os.path.join(d,'demo-themes/default/static/')},
       logger=myLogger
     );

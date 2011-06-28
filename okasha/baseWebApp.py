@@ -309,6 +309,40 @@ class fakeLogger:
   def error(self, msg): pass
   def critical(self, msg): pass
 
+
+def parse_theme(theme_d):
+  r={}
+  fn=os.path.join(theme_d, u"theme.txt")
+  if not os.path.exists(fn): return {}
+  try:
+    f=open(fn)
+    t=f.readlines()
+    f.close()
+  except: return {}
+  for l in t:
+    a=l.strip().split("=",1)
+    if len(a)!=2: continue
+    r[a[0].strip()]=a[1].strip()
+  return r
+
+def get_theme_parent(theme_d):
+  t=parse_theme(theme_d)
+  return t.get('parent', None)
+
+def get_theme_dir(lookup, theme):
+  for i in lookup:
+    d=os.path.join(i, theme)
+    if os.path.isdir(d): return d
+  raise IOError
+
+def get_theme_dirs(lookup, theme):
+  parents=[]
+  while(theme):
+    d=get_theme_dir(lookup, theme)
+    parents.append(d)
+    theme=get_theme_parent(d)
+  return parents
+
 class baseWebApp:
   """
   The base for our web Application, it's a mini web framework
@@ -334,6 +368,7 @@ class baseWebApp:
     self._logger=logger
     # TODO: add a self._templateFilesCache
     if not hasattr(themesDir, '__iter__'): themesDir=[themesDir]
+    print themesDir
     self._themesDir=map(os.path.abspath, themesDir)
     self._templatesDir=map(lambda s: s+'/templates/', themesDir)
     # TODO: add a self._staticFilesCache
