@@ -368,7 +368,6 @@ class baseWebApp:
     self._logger=logger
     # TODO: add a self._templateFilesCache
     if not hasattr(themesDir, '__iter__'): themesDir=[themesDir]
-    print themesDir
     self._themesDir=map(os.path.abspath, themesDir)
     self._templatesDir=map(lambda s: s+'/templates/', themesDir)
     # TODO: add a self._staticFilesCache
