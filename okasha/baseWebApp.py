@@ -68,14 +68,49 @@ def redirectException(location,*a,**kw):
   e.kw['location']=l
   return e
 
+class OkDict(dict):
+  """
+  a dictionary that can be accessed through mydict.key
+  constructor takes an extra argument that is the default value
 
-class Response:
+  you can't set values for the following keys:
+'iteritems', 'pop', 'has_key', 'viewkeys', 'viewitems', 'itervalues', 'get', 'keys', 'update', 'popitem', 'copy', 'iterkeys', 'fromkeys', 'setdefault', 'viewvalues', 'items', 'clear', 'values'
+
+  example usage:
+mydict=OkDict(None, {"y":3})
+print mydict.x
+print mydict.y
+mydict.y=2
+mydict.x=7
+print mydict.x
+print mydict.y
+  """
+  def __init__(self, default=None, *a, **kw):
+    self.__dict__["_default"]=default
+    dict.__init__(self, *a, **kw)
+    self.__dict__["_protect"] = set(dir(self))
+    self._protect.add("_protect")
+    #print filter(lambda s: not s.startswith('_'), self._protect)
+  def __getattr__(self, key):
+    return self.get(key, self._default)
+  def __setattr__(self, k, v):
+    if k in self._protect: raise KeyError
+    self[k]=v
+    return v
+  def __delattr__(self, key):
+    if self.has_key(key): del self[key]
+    return super(dict, self).__delattr__(key)
+
+
+class Response(OkDict):
   def __init__(self, rq=None, code=None,contentType=None,headers=None):
+    OkDict.__init__(self)
     self.rq=rq
     self.code=code
     self.contentType=contentType
     self.headers=headers
     self.cookies=SimpleCookie('')
+    # FIXME: add code to control js and css and title and meta descripton/tags
 
   def setCookie(self, key, value, t=None, path=None, domain=None, comment=None):
     """
@@ -177,7 +212,6 @@ class OkashaFields(FieldStorage):
       try: r=self._save_in(l, d, overwrite, name_pattern, suffix_len, max_size)
       except IOError: return -4
     return r
-
 
 class Request:
   def __init__(self, webapp, environ, start_response):

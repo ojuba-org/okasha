@@ -247,11 +247,21 @@ class SimpleTemplate(BaseTemplate):
         return '\n'.join(codebuffer) + '\n'
 
     def subtemplate(self, _name, _stdout, **args):
+        # NOTE: the following 2 lines added for okasha
+        if not args.has_key('_r'):
+          if self._r: args['_r']=self._r
         if _name not in self.cache:
             self.cache[_name] = self.__class__(name=_name, lookup=self.lookup)
         return self.cache[_name].execute(_stdout, **args)
 
     def execute(self, _stdout, **args):
+        # NOTE: the following 5 lines added for okasha
+        if not hasattr(self, '_r'): self._r=None
+        if args.has_key('_r'):
+          if not self._r: self._r=args['_r']
+        else:
+          if self._r: args['_r']=self._r
+
         env = self.defaults.copy()
         env.update({'_stdout': _stdout, '_printlist': _stdout.extend,
                '_include': self.subtemplate, '_str': self._str,
@@ -261,6 +271,7 @@ class SimpleTemplate(BaseTemplate):
         if '_rebase' in env:
             subtpl, rargs = env['_rebase']
             subtpl = self.__class__(name=subtpl, lookup=self.lookup)
+            subtpl._r=self._r # NOTE: this line is added for okasha
             rargs['_base'] = _stdout[:] #copy stdout
             del _stdout[:] # clear stdout
             return subtpl.execute(_stdout, **rargs)
