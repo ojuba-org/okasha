@@ -116,7 +116,7 @@ class Response(OkDict):
     self.js_links={}
     self.css_links={}
   
-  def add_js_link(self, js, name=None, pos='head', weight=50):
+  def add_js_link(self, js, weight=50, pos='head', name=None):
     '''
     js is relative to theme
     name is a way to avoid registering the same file twice
@@ -128,7 +128,7 @@ class Response(OkDict):
     self.js_links[pos][name]=(weight, js)
     return True
 
-  def add_css_link(self, css, media='all', weight=50):
+  def add_css_link(self, css, weight=50, media='all', name=None):
     '''
     css is relative to theme
     name is a way to avoid registering the same file twice
