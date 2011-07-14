@@ -298,7 +298,7 @@ if __name__ == '__main__':
     lookup=[os.path.join(d,'demo-themes')]
     app=webApp(
       'SafeMode',
-      get_theme_dirs(lookup, 'fancy'), '/_theme/',
+      lookup, 'fancy', '/_theme/',
       staticBaseDir={'/_files/':os.path.join(d,'demo-themes/default/static/')},
       logger=myLogger
     );

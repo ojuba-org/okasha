@@ -110,7 +110,56 @@ class Response(OkDict):
     self.contentType=contentType
     self.headers=headers
     self.cookies=SimpleCookie('')
-    # FIXME: add code to control js and css and title and meta descripton/tags
+    self.title=u''
+    self.meta_description=u''
+    self.meta_keywords=[]
+    self.js_links={}
+    self.css_links={}
+  
+  def add_js_link(self, js, name=None, pos='head', weight=50):
+    '''
+    js is relative to theme
+    name is a way to avoid registering the same file twice
+    pos can be head, begin, end
+    '''
+    if not name: name=os.path.basename(js)
+    if not self.js_links.has_key(pos): self.js_links[pos]={}
+    if self.js_links[pos].has_key(name): return False
+    self.js_links[pos][name]=(weight, js)
+    return True
+
+  def add_css_link(self, css, media='all', weight=50):
+    '''
+    css is relative to theme
+    name is a way to avoid registering the same file twice
+    '''
+    if not name: name=os.path.basename(css)
+    if not self.css_links.has_key(media): self.css_links[media]={}
+    if self.css_links[media].has_key(name): return False
+    self.css_links[media][name]=(weight, css)
+    return True
+
+  def render_css_links(self):
+    r=[]
+    for media, v in self.js_links.items():
+      l=v.values()
+      l.sort()
+      for w,f in l:
+        r.append(u'<link rel="stylesheet" media="%s" type="text/css" href="%s%s/%s" />' % (
+          media, self.rq.script, self.rq.webapp._themePrefix, f,
+          ))
+    return u'\n'.join(r)
+
+  def render_js_links(self, pos='head'):
+    if not self.js_links.has_key(pos): return ''
+    r=[]
+    l=self.js_links[pos].values()
+    l.sort()
+    for w,f in l:
+      r.append(u'<script type="text/javascript" src="%s%s/%s"></script>' % (
+        self.rq.script, self.rq.webapp._themePrefix, f,
+        ))
+    return u'\n'.join(r)
 
   def setCookie(self, key, value, t=None, path=None, domain=None, comment=None):
     """
@@ -388,7 +437,7 @@ class baseWebApp:
     'jpg': 'image/jpeg', 'jpeg': 'image/jpeg'
   }
 
-  def __init__(self, themesDir, themePrefix='/theme/', staticBaseDir={}, redirectBaseUrls={}, logger=fakeLogger(), max_files_count=-1, debug=False):
+  def __init__(self, theme_lookup, theme='default', themePrefix='/theme/', staticBaseDir={}, redirectBaseUrls={}, logger=fakeLogger(), max_files_count=-1, debug=False):
     """
     staticBaseDirs: a dictionary of prefixes and corresponding directories for serving static content
     redirectBaseUrls: just like staticBaseDirs, but redirect to this BaseUrls instead of surving them
@@ -401,6 +450,9 @@ class baseWebApp:
     """
     self._logger=logger
     # TODO: add a self._templateFilesCache
+    self._theme=theme
+    self._theme_lookup=theme_lookup
+    themesDir=get_theme_dirs(theme_lookup, theme)
     if not hasattr(themesDir, '__iter__'): themesDir=[themesDir]
     self._themesDir=map(os.path.abspath, themesDir)
     self._templatesDir=map(lambda s: s+'/templates/', themesDir)
