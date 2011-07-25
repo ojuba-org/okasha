@@ -36,14 +36,12 @@
 </div>
 <!-- TOC END -->
 
-
-
-<h1><a name="قواعد_البيانات_عبر_الإكسير" id="قواعد_البيانات_عبر_الإكسير">قواعد البيانات عبر الإكسير</a></h1>
+<h1 class="sectionedit1"><a name="قواعد_البيانات_عبر_الإكسير" id="قواعد_البيانات_عبر_الإكسير">قواعد البيانات عبر الإكسير</a></h1>
 <div class="level1">
 
 </div>
-<!-- SECTION "قواعد البيانات عبر الإكسير" [1-64] -->
-<h2><a name="مقدمة" id="مقدمة">مقدمة</a></h2>
+<!-- EDIT1 SECTION "قواعد البيانات عبر الإكسير" [1-64] -->
+<h2 class="sectionedit2"><a name="مقدمة" id="مقدمة">مقدمة</a></h2>
 <div class="level2">
 
 <p>
@@ -91,13 +89,13 @@
 </p>
 
 </div>
-<!-- SECTION "مقدمة" [65-1640] -->
-<h2><a name="الإكسير_من_خارج_عكاشة" id="الإكسير_من_خارج_عكاشة">الإكسير من خارج عكاشة</a></h2>
+<!-- EDIT2 SECTION "مقدمة" [65-1640] -->
+<h2 class="sectionedit3"><a name="الإكسير_من_خارج_عكاشة" id="الإكسير_من_خارج_عكاشة">الإكسير من خارج عكاشة</a></h2>
 <div class="level2">
 
 </div>
-<!-- SECTION "الإكسير من خارج عكاشة" [1641-1692] -->
-<h3><a name="عمل_المخطط" id="عمل_المخطط">عمل المخطط</a></h3>
+<!-- EDIT3 SECTION "الإكسير من خارج عكاشة" [1641-1692] -->
+<h3 class="sectionedit4"><a name="عمل_المخطط" id="عمل_المخطط">عمل المخطط</a></h3>
 <div class="level3">
 
 <p>
@@ -170,8 +168,8 @@
 </ul>
 
 </div>
-<!-- SECTION "عمل المخطط" [1693-3348] -->
-<h3><a name="تنفيذ_المخطط" id="تنفيذ_المخطط">تنفيذ المخطط</a></h3>
+<!-- EDIT4 SECTION "عمل المخطط" [1693-3348] -->
+<h3 class="sectionedit5"><a name="تنفيذ_المخطط" id="تنفيذ_المخطط">تنفيذ المخطط</a></h3>
 <div class="level3">
 
 <p>
@@ -184,10 +182,10 @@
 <span class="kw1">class</span> Book<span class="br0">&#40;</span>Entity<span class="br0">&#41;</span>:
   using_options<span class="br0">&#40;</span>tablename=<span class="st0">&quot;book&quot;</span><span class="br0">&#41;</span>
   n = Field<span class="br0">&#40;</span>Integer, primary_key=<span class="kw2">True</span>, autoincrement=<span class="kw2">True</span><span class="br0">&#41;</span>
-  title = Field<span class="br0">&#40;</span>Unicode<span class="br0">&#40;</span>30<span class="br0">&#41;</span>, index=<span class="kw2">True</span><span class="br0">&#41;</span>
+  title = Field<span class="br0">&#40;</span>Unicode<span class="br0">&#40;</span><span class="nu0">30</span><span class="br0">&#41;</span>, index=<span class="kw2">True</span><span class="br0">&#41;</span>
   description = Field<span class="br0">&#40;</span>UnicodeText<span class="br0">&#41;</span>
   year = Field<span class="br0">&#40;</span>Integer<span class="br0">&#41;</span>
-  isbn = Field<span class="br0">&#40;</span>String<span class="br0">&#40;</span>16<span class="br0">&#41;</span>, index=<span class="kw2">True</span>, unique=<span class="kw2">True</span><span class="br0">&#41;</span>
+  isbn = Field<span class="br0">&#40;</span>String<span class="br0">&#40;</span><span class="nu0">16</span><span class="br0">&#41;</span>, index=<span class="kw2">True</span>, unique=<span class="kw2">True</span><span class="br0">&#41;</span>
   authors = ManyToMany<span class="br0">&#40;</span><span class="st0">'Author'</span>, lazy=<span class="kw2">False</span><span class="br0">&#41;</span>
   publisher = ManyToOne<span class="br0">&#40;</span><span class="st0">'Publisher'</span>, lazy=<span class="kw2">False</span><span class="br0">&#41;</span>
   keywords = ManyToMany<span class="br0">&#40;</span><span class="st0">'Keywords'</span>, lazy=<span class="kw2">False</span><span class="br0">&#41;</span>
@@ -195,7 +193,7 @@
 <span class="kw1">class</span> Author<span class="br0">&#40;</span>Entity<span class="br0">&#41;</span>:
   using_options<span class="br0">&#40;</span>tablename=<span class="st0">&quot;author&quot;</span><span class="br0">&#41;</span>
   n = Field<span class="br0">&#40;</span>Integer, primary_key=<span class="kw2">True</span>, autoincrement=<span class="kw2">True</span><span class="br0">&#41;</span>
-  name = Field<span class="br0">&#40;</span>Unicode<span class="br0">&#40;</span>30<span class="br0">&#41;</span>, index=<span class="kw2">True</span><span class="br0">&#41;</span>
+  name = Field<span class="br0">&#40;</span>Unicode<span class="br0">&#40;</span><span class="nu0">30</span><span class="br0">&#41;</span>, index=<span class="kw2">True</span><span class="br0">&#41;</span>
   details = Field<span class="br0">&#40;</span>UnicodeText<span class="br0">&#41;</span>
   year_of_birth = Field<span class="br0">&#40;</span>Integer, index=<span class="kw2">True</span><span class="br0">&#41;</span>
   year_of_death = Field<span class="br0">&#40;</span>Integer, index=<span class="kw2">True</span>, default=<span class="nu0">0</span><span class="br0">&#41;</span>
@@ -204,13 +202,13 @@
 <span class="kw1">class</span> Publisher<span class="br0">&#40;</span>Entity<span class="br0">&#41;</span>:
   using_options<span class="br0">&#40;</span>tablename=<span class="st0">&quot;publisher&quot;</span><span class="br0">&#41;</span>
   n = Field<span class="br0">&#40;</span>Integer, primary_key=<span class="kw2">True</span>, autoincrement=<span class="kw2">True</span><span class="br0">&#41;</span>
-  name = Field<span class="br0">&#40;</span>Unicode<span class="br0">&#40;</span>30<span class="br0">&#41;</span>, index=<span class="kw2">True</span><span class="br0">&#41;</span>
+  name = Field<span class="br0">&#40;</span>Unicode<span class="br0">&#40;</span><span class="nu0">30</span><span class="br0">&#41;</span>, index=<span class="kw2">True</span><span class="br0">&#41;</span>
   books = OneToMany<span class="br0">&#40;</span><span class="st0">'Book'</span>, lazy=<span class="kw2">True</span><span class="br0">&#41;</span>
 &nbsp;
 <span class="kw1">class</span> Keywords<span class="br0">&#40;</span>Entity<span class="br0">&#41;</span>:
   using_options<span class="br0">&#40;</span>tablename=<span class="st0">&quot;keywords&quot;</span><span class="br0">&#41;</span>
   n = Field<span class="br0">&#40;</span>Integer, primary_key=<span class="kw2">True</span>, autoincrement=<span class="kw2">True</span><span class="br0">&#41;</span>
-  name = Field<span class="br0">&#40;</span>Unicode<span class="br0">&#40;</span>30<span class="br0">&#41;</span>, index=<span class="kw2">True</span><span class="br0">&#41;</span>
+  name = Field<span class="br0">&#40;</span>Unicode<span class="br0">&#40;</span><span class="nu0">30</span><span class="br0">&#41;</span>, index=<span class="kw2">True</span><span class="br0">&#41;</span>
   books = ManyToMany<span class="br0">&#40;</span><span class="st0">'Book'</span>, lazy=<span class="kw2">True</span><span class="br0">&#41;</span></pre>
 
 <p>
@@ -258,8 +256,8 @@ elixir.<span class="me1">setup_all</span><span class="br0">&#40;</span><span cla
 <pre class="code python">elixir.<span class="me1">metadata</span>.<span class="me1">bind</span>.<span class="me1">echo</span> = <span class="kw2">True</span></pre>
 
 </div>
-<!-- SECTION "تنفيذ المخطط" [3349-6341] -->
-<h3><a name="إضافة_المدخلات" id="إضافة_المدخلات">إضافة المدخلات</a></h3>
+<!-- EDIT5 SECTION "تنفيذ المخطط" [3349-6341] -->
+<h3 class="sectionedit6"><a name="إضافة_المدخلات" id="إضافة_المدخلات">إضافة المدخلات</a></h3>
 <div class="level3">
 
 <p>
@@ -307,8 +305,8 @@ elixir.<span class="me1">session</span>.<span class="me1">commit</span><span cla
 </p>
 
 </div>
-<!-- SECTION "إضافة المدخلات" [6342-8491] -->
-<h3><a name="الاستعلام_والتعديل" id="الاستعلام_والتعديل">الاستعلام والتعديل</a></h3>
+<!-- EDIT6 SECTION "إضافة المدخلات" [6342-8491] -->
+<h3 class="sectionedit7"><a name="الاستعلام_والتعديل" id="الاستعلام_والتعديل">الاستعلام والتعديل</a></h3>
 <div class="level3">
 
 <p>
@@ -349,30 +347,30 @@ elixir.<span class="me1">session</span>.<span class="me1">commit</span><span cla
   <span class="kw1">print</span> <span class="st0">&quot;.&quot;</span></pre>
 
 </div>
-<!-- SECTION "الاستعلام والتعديل" [8492-9903] -->
-<h3><a name="الاستعلام_والفلترة" id="الاستعلام_والفلترة">الاستعلام والفلترة</a></h3>
+<!-- EDIT7 SECTION "الاستعلام والتعديل" [8492-9903] -->
+<h3 class="sectionedit8"><a name="الاستعلام_والفلترة" id="الاستعلام_والفلترة">الاستعلام والفلترة</a></h3>
 <div class="level3">
 
 <p>
 بطريقة مشابهة لنفرض أننا نريد كل الكتب التي طبعت بعد 1960
 
 </p>
-<pre class="code python">books=Book.<span class="me1">query</span>.<span class="kw2">filter</span><span class="br0">&#40;</span>Book.<span class="me1">year</span><span class="sy0">&gt;</span>1960<span class="br0">&#41;</span>
+<pre class="code python">books=Book.<span class="me1">query</span>.<span class="kw2">filter</span><span class="br0">&#40;</span>Book.<span class="me1">year</span><span class="sy0">&gt;</span><span class="nu0">1960</span><span class="br0">&#41;</span>
 <span class="kw1">for</span> b <span class="kw1">in</span> books: <span class="kw1">print</span> b.<span class="me1">title</span>, <span class="st0">&quot;@&quot;</span>, b.<span class="me1">year</span></pre>
 
 <p>
 
 يمكننا أيضا تركيب الفلاتر وراء بعضها كذلك يمكننا ترتيب النتائج وأخذ أول كذا نتيجة
 </p>
-<pre class="code python">books=Book.<span class="me1">query</span>.<span class="kw2">filter</span><span class="br0">&#40;</span>Book.<span class="me1">year</span><span class="sy0">&gt;</span>1960<span class="br0">&#41;</span>.<span class="me1">order_by</span><span class="br0">&#40;</span>elixir.<span class="me1">sqlalchemy</span>.<span class="me1">desc</span><span class="br0">&#40;</span>Book.<span class="me1">year</span><span class="br0">&#41;</span><span class="br0">&#41;</span>.<span class="me1">limit</span><span class="br0">&#40;</span>10<span class="br0">&#41;</span>
+<pre class="code python">books=Book.<span class="me1">query</span>.<span class="kw2">filter</span><span class="br0">&#40;</span>Book.<span class="me1">year</span><span class="sy0">&gt;</span><span class="nu0">1960</span><span class="br0">&#41;</span>.<span class="me1">order_by</span><span class="br0">&#40;</span>elixir.<span class="me1">sqlalchemy</span>.<span class="me1">desc</span><span class="br0">&#40;</span>Book.<span class="me1">year</span><span class="br0">&#41;</span><span class="br0">&#41;</span>.<span class="me1">limit</span><span class="br0">&#40;</span><span class="nu0">10</span><span class="br0">&#41;</span>
 <span class="kw1">for</span> b <span class="kw1">in</span> books: <span class="kw1">print</span> b.<span class="me1">title</span>, <span class="st0">&quot;@&quot;</span>, b.<span class="me1">year</span></pre>
 
 </div>
-<!-- SECTION "الاستعلام والفلترة" [9904-10467] -->
-<h2><a name="مثال_على_ربطها_مع_عكاشة" id="مثال_على_ربطها_مع_عكاشة">مثال على ربطها مع عكاشة</a></h2>
+<!-- EDIT8 SECTION "الاستعلام والفلترة" [9904-10467] -->
+<h2 class="sectionedit9"><a name="مثال_على_ربطها_مع_عكاشة" id="مثال_على_ربطها_مع_عكاشة">مثال على ربطها مع عكاشة</a></h2>
 <div class="level2">
 
 </div>
-<!-- SECTION "مثال على ربطها مع عكاشة" [10468-] --></div>
+<!-- EDIT9 SECTION "مثال على ربطها مع عكاشة" [10468-] --></div>
 </body>
 </html>

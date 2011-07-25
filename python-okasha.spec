@@ -59,7 +59,7 @@ rm -rf $RPM_BUILD_ROOT
         --optimize=2
 
 mkdir -p $RPM_BUILD_ROOT/%{_datadir}/doc/%{name}-docs/
-cp -a test.py test.wsgi files templates $RPM_BUILD_ROOT/%{_datadir}/doc/%{name}-docs/
+cp -a test.py test.wsgi demo-themes $RPM_BUILD_ROOT/%{_datadir}/doc/%{name}-docs/
 rm docs/update-from-site.sh
 cp -a docs/* $RPM_BUILD_ROOT/%{_datadir}/doc/%{name}-docs/
 

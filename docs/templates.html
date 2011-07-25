@@ -31,9 +31,7 @@
 </div>
 <!-- TOC END -->
 
-
-
-<h1><a name="القوالب" id="القوالب">القوالب</a></h1>
+<h1 class="sectionedit1"><a name="القوالب" id="القوالب">القوالب</a></h1>
 <div class="level1">
 
 <p>
@@ -45,8 +43,8 @@
 </p>
 
 </div>
-<!-- SECTION "القوالب" [1-636] -->
-<h2><a name="قوالب_formattemplate" id="قوالب_formattemplate">قوالب formatTemplate</a></h2>
+<!-- EDIT1 SECTION "القوالب" [1-636] -->
+<h2 class="sectionedit2"><a name="قوالب_formattemplate" id="قوالب_formattemplate">قوالب formatTemplate</a></h2>
 <div class="level2">
 
 <p>
@@ -82,9 +80,7 @@ Please enter name:
 توفر هذه الدالة الكثير من طرق التنسيق مثلا
 
 </p>
-<pre class="code">
-&lt;tt&gt;{balance:.3f}&lt;/tt&gt;
-</pre>
+<pre class="code">&lt;tt&gt;{balance:.3f}&lt;/tt&gt;</pre>
 
 <p>
 هذه الطريقة مفيدة جدا إلا أنه يعيبها
@@ -107,8 +103,8 @@ Please enter name:
 </ul>
 
 </div>
-<!-- SECTION "قوالب formatTemplate" [637-2320] -->
-<h2><a name="قوالب_percenttemplate" id="قوالب_percenttemplate">قوالب percentTemplate</a></h2>
+<!-- EDIT2 SECTION "قوالب formatTemplate" [637-2320] -->
+<h2 class="sectionedit3"><a name="قوالب_percenttemplate" id="قوالب_percenttemplate">قوالب percentTemplate</a></h2>
 <div class="level2">
 
 <p>
@@ -151,8 +147,8 @@ Please enter name:
 </ul>
 
 </div>
-<!-- SECTION "قوالب percentTemplate" [2321-3851] -->
-<h2><a name="قالب_jsondumps" id="قالب_jsondumps">قالب jsonDumps</a></h2>
+<!-- EDIT3 SECTION "قوالب percentTemplate" [2321-3851] -->
+<h2 class="sectionedit4"><a name="قالب_jsondumps" id="قالب_jsondumps">قالب jsonDumps</a></h2>
 <div class="level2">
 
 <p>
@@ -179,8 +175,8 @@ Please enter name:
 </p>
 
 </div>
-<!-- SECTION "قالب jsonDumps" [3852-5037] -->
-<h2><a name="قوالب_bottle_المتقدمة" id="قوالب_bottle_المتقدمة">قوالب bottle المتقدمة</a></h2>
+<!-- EDIT4 SECTION "قالب jsonDumps" [3852-5037] -->
+<h2 class="sectionedit5"><a name="قوالب_bottle_المتقدمة" id="قوالب_bottle_المتقدمة">قوالب bottle المتقدمة</a></h2>
 <div class="level2">
 
 <p>
@@ -196,26 +192,20 @@ Please enter name:
 في هذا القالب تستطيع وضع أي تعبير بايثوني (على أن يعيد نص أو عدة نصوص) بين حاصرتين مزدوجتين هكذا:
 
 </p>
-<pre class="code">
-Hello, {{name}}!
-</pre>
+<pre class="code">Hello, {{name}}!</pre>
 
 <p>
 
 هنا سيتم تعويض قيمة name بعد Hello.
 والتي قد تعطي شيء يشبه
 </p>
-<pre class="code">
-Hello, Ali!
-</pre>
+<pre class="code">Hello, Ali!</pre>
 
 <p>
 يمكن استخدام تعابير أعقد مثل
 
 </p>
-<pre class="code">
-Hello, {{user.get_name() if user else &quot;world&quot;}}!
-</pre>
+<pre class="code">Hello, {{user.get_name() if user else &quot;world&quot;}}!</pre>
 
 <p>
 
@@ -226,9 +216,7 @@ Hello, {{user.get_name() if user else &quot;world&quot;}}!
 كذلك يعمل على تخطي العلامة الخاصة ب html حتى تظهر بالشكل الصحيح. مثلا إن كانت القيمة مثلا &lt;a&gt; فإنه سيحوله إلى &amp;lt;a&amp;gt;  حتى يظهر في <acronym title="HyperText Markup Language">HTML</acronym> كما هو فإن كنت تريده أن يظهر دون تخطي ضع ! بعد فتح الحاصرتين.
 
 </p>
-<pre class="code">
-Hello, {{!name}}!
-</pre>
+<pre class="code">Hello, {{!name}}!</pre>
 
 <p>
 يمكنك استخدام عبارات &#039;if&#039;  و &#039;elif&#039; و &#039;else&#039; و &#039;try&#039; و &#039;except&#039; و &#039;finally&#039; و &#039;for&#039; و &#039;while&#039; و &#039;with&#039; و &#039;def&#039; و &#039;class&#039; لكن على أن تبدأها ب % وأن لا يسبقها إلا مسافات وعلى أن تنهيها ب %end وذلك عوضا عن المسافات البادئة في بايثون مثلا يمكنك أن تعمل ما يشبه
@@ -298,8 +286,8 @@ This is the page content: {{content}}
 </p>
 
 </div>
-<!-- SECTION "قوالب bottle المتقدمة" [5038-8815] -->
-<h2><a name="قوالب_kid_المتقدمة" id="قوالب_kid_المتقدمة">قوالب kid المتقدمة</a></h2>
+<!-- EDIT5 SECTION "قوالب bottle المتقدمة" [5038-8815] -->
+<h2 class="sectionedit6"><a name="قوالب_kid_المتقدمة" id="قوالب_kid_المتقدمة">قوالب kid المتقدمة</a></h2>
 <div class="level2">
 
 <p>
@@ -335,12 +323,10 @@ This is the page content: {{content}}
 لاحظ كيف استدعينا بايثون كما نفعل مع php هكذا
 
 </p>
-<pre class="code">
-&lt;?python
+<pre class="code">&lt;?python
 import time
 title = &quot;A Kid Template&quot;
-?&gt;
-</pre>
+?&gt;</pre>
 
 <p>
 
@@ -377,8 +363,8 @@ title = &quot;A Kid Template&quot;
 </ul>
 
 </div>
-<!-- SECTION "قوالب kid المتقدمة" [8816-10945] -->
-<h2><a name="قوالب_xslt" id="قوالب_xslt">قوالب xslt</a></h2>
+<!-- EDIT6 SECTION "قوالب kid المتقدمة" [8816-10945] -->
+<h2 class="sectionedit7"><a name="قوالب_xslt" id="قوالب_xslt">قوالب xslt</a></h2>
 <div class="level2">
 
 <p>
@@ -400,6 +386,6 @@ title = &quot;A Kid Template&quot;
 </p>
 
 </div>
-<!-- SECTION "قوالب xslt" [10946-] --></div>
+<!-- EDIT7 SECTION "قوالب xslt" [10946-] --></div>
 </body>
 </html>

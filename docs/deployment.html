@@ -28,9 +28,10 @@
 <ul class="toc">
 <li class="level3"><div class="li"><span class="li"><a href="#طريقة_توزيع_الملفات" class="toc">طريقة توزيع الملفات</a></span></div></li>
 <li class="level3"><div class="li"><span class="li"><a href="#إعداد_apache" class="toc">إعداد apache</a></span></div></li>
-<li class="level3"><div class="li"><span class="li"><a href="#خادم_أخرى" class="toc">خادم أخرى</a></span></div></li>
 </ul>
 </li>
+<li class="level2"><div class="li"><span class="li"><a href="#عبر_fast_cgi" class="toc">عبر Fast CGI</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="#خوادم_أخرى" class="toc">خوادم أخرى</a></span></div></li>
 <li class="level2"><div class="li"><span class="li"><a href="#تقييم_خوادم_wsgi" class="toc">تقييم خوادم WSGI</a></span></div></li>
 </ul>
 </li>
@@ -38,9 +39,7 @@
 </div>
 <!-- TOC END -->
 
-
-
-<h1><a name="طرق_النشر" id="طرق_النشر">طرق النشر</a></h1>
+<h1 class="sectionedit1"><a name="طرق_النشر" id="طرق_النشر">طرق النشر</a></h1>
 <div class="level1">
 
 <p>
@@ -52,8 +51,8 @@
 </p>
 
 </div>
-<!-- SECTION "طرق النشر" [1-395] -->
-<h2><a name="طريقة_cgi_البائدة_وما_يشبهها" id="طريقة_cgi_البائدة_وما_يشبهها">طريقة CGI البائدة وما يشبهها</a></h2>
+<!-- EDIT1 SECTION "طرق النشر" [1-395] -->
+<h2 class="sectionedit2"><a name="طريقة_cgi_البائدة_وما_يشبهها" id="طريقة_cgi_البائدة_وما_يشبهها">طريقة CGI البائدة وما يشبهها</a></h2>
 <div class="level2">
 
 <p>
@@ -65,8 +64,8 @@
 </p>
 
 </div>
-<!-- SECTION "طريقة CGI البائدة وما يشبهها" [396-911] -->
-<h2><a name="عبر_خادم_python-paste_المنضدد" id="عبر_خادم_python-paste_المنضدد">عبر خادم python-paste المنضدد</a></h2>
+<!-- EDIT2 SECTION "طريقة CGI البائدة وما يشبهها" [396-911] -->
+<h2 class="sectionedit3"><a name="عبر_خادم_python-paste_المنضدد" id="عبر_خادم_python-paste_المنضدد">عبر خادم python-paste المنضدد</a></h2>
 <div class="level2">
 
 <p>
@@ -74,18 +73,16 @@
 </p>
 
 </div>
-<!-- SECTION "عبر خادم python-paste المنضدد" [912-998] -->
-<h2><a name="عبر_mod_proxy_في_apache" id="عبر_mod_proxy_في_apache">عبر mod_proxy في apache</a></h2>
+<!-- EDIT3 SECTION "عبر خادم python-paste المنضدد" [912-998] -->
+<h2 class="sectionedit4"><a name="عبر_mod_proxy_في_apache" id="عبر_mod_proxy_في_apache">عبر mod_proxy في apache</a></h2>
 <div class="level2">
 
 <p>
 لنفرض أن التطبيق يعمل على خادم paste الضمني على المنفذ 8080 ويستمع فقط للطلبات المحلية على العنوان 127.0.0.1 أي localhost حتى نجعله متوفر عبر خادم apache العام على منفذ 80 يمكننا بكل بساطة أن نضيف ما يلي إلى إعدادات Apache
 
 </p>
-<pre class="code">
-ProxyPass         /myapp  http://localhost:8080/
-ProxyPassReverse  /myapp  http://localhost:8080/
-</pre>
+<pre class="code">ProxyPass         /myapp  http://localhost:8080/
+ProxyPassReverse  /myapp  http://localhost:8080/</pre>
 
 <p>
 وفي هذه الحالة ستحال الطلبات القدمة إلى المنفذ 80 إن كانت  تبدأ ب /myapp إلى <a target="_blank" href="http://localhost:8080/" class="urlextern" title="http://localhost:8080/"  rel="nofollow">http://localhost:8080/</a>
@@ -97,8 +94,8 @@ ProxyPassReverse  /myapp  http://localhost:8080/
 </ul>
 
 </div>
-<!-- SECTION "عبر mod_proxy في apache" [999-1776] -->
-<h2><a name="عبر_google_app_engine" id="عبر_google_app_engine">عبر google app engine</a></h2>
+<!-- EDIT4 SECTION "عبر mod_proxy في apache" [999-1776] -->
+<h2 class="sectionedit5"><a name="عبر_google_app_engine" id="عبر_google_app_engine">عبر google app engine</a></h2>
 <div class="level2">
 
 <p>
@@ -123,22 +120,19 @@ run_wsgi_app<span class="br0">&#40;</span>application<span class="br0">&#41;</sp
 ونعمل ملف app.yaml نخبره أن يحل كل شيء إلى apptest.py هكذا
 
 </p>
-<pre class="file">
-application: okashaTest
+<pre class="file">application: okashaTest
 version: 1
 runtime: python
 api_version: 1
 
 handlers:
 - url: .*
-  script: apptest.py
-</pre>
+  script: apptest.py</pre>
 
 <p>
 بعدها قم بتجربته فإن كان كل شيء على خير ما يرام يمكنك نقل تخديم الملفات الساكنة إلى google apps عوضا عن عكاشة بتعديل الملف app.yaml إلى
 </p>
-<pre class="file">
-application: okashaTest
+<pre class="file">application: okashaTest
 version: 1
 runtime: python
 api_version: 1
@@ -148,8 +142,7 @@ handlers:
   static_dir: files
 
 - url: .*
-  script: apptest.py
-</pre>
+  script: apptest.py</pre>
 
 <p>
 <strong>ملاحظة:</strong> لا تستطيع استخدام قوالب formatTemplate لأنها غير متوفرة في بايثون 2.5 بل 2.6.
@@ -165,18 +158,18 @@ handlers:
 </ul>
 
 </div>
-<!-- SECTION "عبر google app engine" [1777-3582] -->
-<h2><a name="عبر_mod_python_في_خادم_apache" id="عبر_mod_python_في_خادم_apache">عبر mod_python في خادم apache</a></h2>
+<!-- EDIT5 SECTION "عبر google app engine" [1777-3582] -->
+<h2 class="sectionedit6"><a name="عبر_mod_python_في_خادم_apache" id="عبر_mod_python_في_خادم_apache">عبر mod_python في خادم apache</a></h2>
 <div class="level2">
 
 </div>
-<!-- SECTION "عبر mod_python في خادم apache" [3583-3634] -->
-<h2><a name="عبر_mod_wsgi_في_خادم_apache" id="عبر_mod_wsgi_في_خادم_apache">عبر mod_wsgi في خادم apache</a></h2>
+<!-- EDIT6 SECTION "عبر mod_python في خادم apache" [3583-3634] -->
+<h2 class="sectionedit7"><a name="عبر_mod_wsgi_في_خادم_apache" id="عبر_mod_wsgi_في_خادم_apache">عبر mod_wsgi في خادم apache</a></h2>
 <div class="level2">
 
 </div>
-<!-- SECTION "عبر mod_wsgi في خادم apache" [3635-3683] -->
-<h3><a name="طريقة_توزيع_الملفات" id="طريقة_توزيع_الملفات">طريقة توزيع الملفات</a></h3>
+<!-- EDIT7 SECTION "عبر mod_wsgi في خادم apache" [3635-3683] -->
+<h3 class="sectionedit8"><a name="طريقة_توزيع_الملفات" id="طريقة_توزيع_الملفات">طريقة توزيع الملفات</a></h3>
 <div class="level3">
 
 <p>
@@ -194,7 +187,7 @@ handlers:
 <span class="kw1">import</span> <span class="kw3">sys</span>, <span class="kw3">os</span>, <span class="kw3">os</span>.<span class="me1">path</span>
 prefix=<span class="kw3">os</span>.<span class="me1">path</span>.<span class="me1">expanduser</span><span class="br0">&#40;</span><span class="st0">'~/myapp-files/'</span><span class="br0">&#41;</span>
 pyprefix=<span class="kw3">os</span>.<span class="me1">path</span>.<span class="me1">expanduser</span><span class="br0">&#40;</span><span class="st0">'~/pyapps/'</span><span class="br0">&#41;</span>
-<span class="kw3">sys</span>.<span class="me1">path</span>.<span class="me1">insert</span><span class="br0">&#40;</span>0, pyprefix<span class="br0">&#41;</span>
+<span class="kw3">sys</span>.<span class="me1">path</span>.<span class="me1">insert</span><span class="br0">&#40;</span><span class="nu0">0</span>, pyprefix<span class="br0">&#41;</span>
 <span class="kw1">from</span> myapp <span class="kw1">import</span> MyApp
 application=MyApp<span class="br0">&#40;</span>
   <span class="kw3">os</span>.<span class="me1">path</span>.<span class="me1">join</span><span class="br0">&#40;</span>prefix,<span class="st0">'templates'</span><span class="br0">&#41;</span>,
@@ -206,8 +199,8 @@ application=MyApp<span class="br0">&#40;</span>
 </p>
 
 </div>
-<!-- SECTION "طريقة توزيع الملفات" [3684-5278] -->
-<h3><a name="إعداد_apache" id="إعداد_apache">إعداد apache</a></h3>
+<!-- EDIT8 SECTION "طريقة توزيع الملفات" [3684-5278] -->
+<h3 class="sectionedit9"><a name="إعداد_apache" id="إعداد_apache">إعداد apache</a></h3>
 <div class="level3">
 
 <p>
@@ -238,9 +231,41 @@ application=MyApp<span class="br0">&#40;</span>
     <span class="sc3"><span class="re1">&lt;/Directory<span class="re2">&gt;</span></span></span></pre>
 
 </div>
-<!-- SECTION "إعداد apache" [5279-6313] -->
-<h3><a name="خادم_أخرى" id="خادم_أخرى">خادم أخرى</a></h3>
-<div class="level3">
+<!-- EDIT9 SECTION "إعداد apache" [5279-6313] -->
+<h2 class="sectionedit10"><a name="عبر_fast_cgi" id="عبر_fast_cgi">عبر Fast CGI</a></h2>
+<div class="level2">
+
+<p>
+توفر flup دعم fast cgi تطليقات wsgi مثل عكاشة كل ما عليك هو عمل ملف يشبه الملف أدناه وتسميته myapp.fcgi وحفظه في مكان يراه خادم apache
+</p>
+<pre class="code python"><span class="co1">#! /usr/bin/python</span>
+<span class="co1"># -*- coding: UTF-8 -*-</span>
+&nbsp;
+<span class="kw3">sys</span>.<span class="me1">path</span>.<span class="me1">insert</span><span class="br0">&#40;</span><span class="nu0">0</span>, <span class="kw3">os</span>.<span class="me1">path</span>.<span class="me1">expanduser</span><span class="br0">&#40;</span><span class="st0">'~/projects/'</span><span class="br0">&#41;</span><span class="br0">&#41;</span>
+<span class="kw1">from</span> flup.<span class="me1">server</span>.<span class="me1">fcgi</span> <span class="kw1">import</span> WSGIServer
+<span class="kw1">from</span> myapp <span class="kw1">import</span> MyApp
+application=MyApp<span class="br0">&#40;</span>
+  <span class="kw3">os</span>.<span class="me1">path</span>.<span class="me1">join</span><span class="br0">&#40;</span>prefix,<span class="st0">'templates'</span><span class="br0">&#41;</span>,
+  staticBaseDir=<span class="br0">&#123;</span><span class="st0">'/media/'</span>:<span class="kw3">os</span>.<span class="me1">path</span>.<span class="me1">join</span><span class="br0">&#40;</span>prefix,<span class="st0">'static-files'</span><span class="br0">&#41;</span><span class="br0">&#125;</span>
+  <span class="br0">&#41;</span><span class="sy0">;</span>
+&nbsp;
+<span class="kw1">if</span> __name__ == <span class="st0">'__main__'</span>:
+  WSGIServer<span class="br0">&#40;</span>application<span class="br0">&#41;</span>.<span class="me1">run</span><span class="br0">&#40;</span><span class="br0">&#41;</span></pre>
+
+<p>
+انظر
+</p>
+<ul>
+<li class="level1"><div class="li"> <a target="_blank" href="http://trac.saddi.com/flup/wiki/FlupServers" class="urlextern" title="http://trac.saddi.com/flup/wiki/FlupServers"  rel="nofollow">http://trac.saddi.com/flup/wiki/FlupServers</a></div>
+</li>
+<li class="level1"><div class="li"> <a target="_blank" href="http://flask.pocoo.org/docs/deploying/fastcgi/" class="urlextern" title="http://flask.pocoo.org/docs/deploying/fastcgi/"  rel="nofollow">http://flask.pocoo.org/docs/deploying/fastcgi/</a></div>
+</li>
+</ul>
+
+</div>
+<!-- EDIT10 SECTION "عبر Fast CGI" [6314-7034] -->
+<h2 class="sectionedit11"><a name="خوادم_أخرى" id="خوادم_أخرى">خوادم أخرى</a></h2>
+<div class="level2">
 
 <p>
 من أفضل خوادم WSGI أداءً وتوفيرا في الذاكرة وسرعة الاستجابة
@@ -253,11 +278,13 @@ application=MyApp<span class="br0">&#40;</span>
 </li>
 <li class="level1"><div class="li"> <a target="_blank" href="http://wiki.github.com/william-os4y/fapws3/" class="urlextern" title="http://wiki.github.com/william-os4y/fapws3/"  rel="nofollow">FAPWS3</a></div>
 </li>
+<li class="level1"><div class="li"> <a href="https://github.com/jonashaag/bjoern" class="urlextern" title="https://github.com/jonashaag/bjoern"  rel="nofollow">https://github.com/jonashaag/bjoern</a></div>
+</li>
 </ul>
 
 </div>
-<!-- SECTION "خادم أخرى" [6314-6592] -->
-<h2><a name="تقييم_خوادم_wsgi" id="تقييم_خوادم_wsgi">تقييم خوادم WSGI</a></h2>
+<!-- EDIT11 SECTION "خوادم أخرى" [7035-7356] -->
+<h2 class="sectionedit12"><a name="تقييم_خوادم_wsgi" id="تقييم_خوادم_wsgi">تقييم خوادم WSGI</a></h2>
 <div class="level2">
 
 <p>
@@ -270,6 +297,6 @@ application=MyApp<span class="br0">&#40;</span>
 </ul>
 
 </div>
-<!-- SECTION "تقييم خوادم WSGI" [6593-] --></div>
+<!-- EDIT12 SECTION "تقييم خوادم WSGI" [7357-] --></div>
 </body>
 </html>
