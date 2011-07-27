@@ -5,7 +5,7 @@ Name: python-okasha
 
 Summary: trivial WSGI web framework for python
 URL: http://okasha.ojuba.org
-Version: 0.2.3
+Version: 0.2.4
 Release: 1%{?dist}
 Source0: http://git.ojuba.org/cgit/%{srcname}/snapshot/%{srcname}-%{version}.tar.bz2
 License: Waqf
