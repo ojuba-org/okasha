@@ -141,7 +141,7 @@ class Response(OkDict):
 
   def render_css_links(self):
     r=[]
-    for media, v in self.js_links.items():
+    for media, v in self.css_links.items():
       l=v.values()
       l.sort()
       for w,f in l:
