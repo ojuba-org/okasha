@@ -6,12 +6,12 @@ Name: python-okasha
 Summary: WSGI web framework for python
 URL: http://ojuba.org
 Version: 0.2.4
-Release: 2%{?dist}
+Release: 3%{?dist}
 Source0: https://github.com/%{owner}/%{sname}/archive/%{commit}/%{sname}-%{commit}.tar.gz
 License: WAQFv2
 Group: System Environment/Base
 BuildArch: noarch
-BuildRequires: python
+BuildRequires: python2-devel
 BuildRequires: perl
 
 %description
@@ -71,23 +71,26 @@ cp -a docs/* $RPM_BUILD_ROOT/%{_datadir}/doc/%{name}-docs/
 %files
 %defattr(-,root,root,-)
 %doc waqf2-ar.pdf README README.ar.txt TODO
-%{python2_sitelib}/%{srcname}/__init__.py*
-%{python2_sitelib}/%{srcname}/baseWebApp.py*
-%{python2_sitelib}/%{srcname}/bottleTemplate.py*
-%{python2_sitelib}/%{srcname}/bottleTemplateSegment.py*
-%{python2_sitelib}/%{srcname}/utils.py*
+%{python2_sitelib}/%{sname}/__init__.py*
+%{python2_sitelib}/%{sname}/baseWebApp.py*
+%{python2_sitelib}/%{sname}/bottleTemplate.py*
+%{python2_sitelib}/%{sname}/bottleTemplateSegment.py*
+%{python2_sitelib}/%{sname}/utils.py*
 %{python2_sitelib}/*.egg-info
 
 %files xslt
-%{python2_sitelib}/%{srcname}/kidTemplate.py*
+%{python2_sitelib}/%{sname}/kidTemplate.py*
 
 %files kid
-%{python2_sitelib}/%{srcname}/xsltTemplate.py*
+%{python2_sitelib}/%{sname}/xsltTemplate.py*
 
 %files docs
 %{_datadir}/doc/%{name}-docs/
 
 %changelog
+* Sat Feb 15 2014 Mosaab Alzoubi <moceap@hotmail.com> - 0.2.4-3
+- General Fixes.
+
 * Sat Feb 15 2014 Mosaab Alzoubi <moceap@hotmail.com> - 0.2.4-2
 - Full Revision.
 
