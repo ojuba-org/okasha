@@ -19,7 +19,6 @@ Copyright © 2009, Muayyad Alsadi <alsadi@ojuba.org>
 """
 
 from okasha.baseWebApp import *
-from okasha.kidTemplate import kidTemplate
 from okasha.xsltTemplate import xsltTemplate
 from okasha.bottleTemplate import bottleTemplate
 
@@ -100,7 +99,6 @@ You query is [<strong>%(q)s</strong>]<br/>
 <li><a href="%(script)s/tmp/err/raised/?id=5">tmp (not allowed)</a></li>
 <li><a href="%(script)s/format/some/args/?id=5">format</a></li>
 <li><a href="%(script)s/bottletmp/red/yellow/green/">bottle templates</a></li>
-<li><a href="%(script)s/kidtmp/some/args/?id=5">kid templates</a></li>
 <li><a href="%(script)s/xslt/some/args/?id=5">xslt templates</a></li>
 <li><a href="%(script)s/docbook/some/args/?id=5">docbook templates</a></li>
 <li><a href="%(script)s/cookies/">cookies</a></li>
@@ -151,17 +149,6 @@ You query is [<strong>%(q)s</strong>]<br/>
     return {
       'title':'Okasha simple bottle templates',
       'colors':args
-      }
-
-  @expose(kidTemplate,["kidtest.kid"])
-  def kidtmp(self, rq, *args):
-    """
-      http://localhost:8080/kidtmp/some/args/?id=5
-    """
-    return {
-      'h1':'this is how kid templates works',
-      'ls':['apple','banana','orange','tomato'],
-      'args':'/'.join(args)
       }
 
   @expose(xsltTemplate,["test.xsl"], contentType="text/xml; charset=utf-8")
