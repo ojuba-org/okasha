@@ -28,7 +28,7 @@ Licence (MIT)
 
 import sys, os, os.path, tokenize, functools, re
 from cgi import escape
-from baseWebApp import webAppBaseException
+from .baseWebApp import webAppBaseException
 
 #########################
 
@@ -53,14 +53,14 @@ if sys.version_info >= (3,0,0): # pragma: no cover
     def touni(x, enc='utf8'): # Convert anything to unicode (py3)
         return str(x, encoding=enc) if isinstance(x, bytes) else str(x)
 else:
-    from StringIO import StringIO as BytesIO
+    from io import StringIO as BytesIO
     from types import StringType
     NCTextIOWrapper = None
     def touni(x, enc='utf8'): # Convert anything to unicode (py2)
-        return x if isinstance(x, unicode) else unicode(str(x), encoding=enc)
+        return x if isinstance(x, str) else str(str(x), encoding=enc)
 
 def tob(data, enc='utf8'): # Convert strings to bytes (py2 and py3)
-    return data.encode(enc) if isinstance(data, unicode) else data
+    return data.encode(enc) if isinstance(data, str) else data
 
 
 class BaseTemplate(object):
@@ -83,7 +83,7 @@ class BaseTemplate(object):
         self.name = name
         self.source = source.read() if hasattr(source, 'read') else source
         self.filename = source.filename if hasattr(source, 'filename') else None
-        self.lookup = map(os.path.abspath, lookup)
+        self.lookup = list(map(os.path.abspath, lookup))
         self.encoding = encoding
         self.settings = self.settings.copy() # Copy from class variable
         self.settings.update(settings) # Apply 
@@ -154,7 +154,7 @@ class SimpleTemplate(BaseTemplate):
         lineno = 0 # Current line of code
         ptrbuffer = [] # Buffer for printable strings and token tuple instances
         codebuffer = [] # Buffer for generated python code
-        touni = functools.partial(unicode, encoding=self.encoding)
+        touni = functools.partial(str, encoding=self.encoding)
         multiline = dedent = False
 
         def yield_tokens(line):
@@ -168,7 +168,7 @@ class SimpleTemplate(BaseTemplate):
             """ Removes comments from a line of code. """
             line = codeline.splitlines()[0]
             try:
-                tokens = list(tokenize.generate_tokens(iter(line).next))
+                tokens = list(tokenize.generate_tokens(iter(line).__next__))
             except tokenize.TokenError:
                 return line.rsplit('#',1) if '#' in line else (line, '')
             for token in tokens:
@@ -200,8 +200,8 @@ class SimpleTemplate(BaseTemplate):
 
         for line in template.splitlines(True):
             lineno += 1
-            line = line if isinstance(line, unicode)\
-                        else unicode(line, encoding=self.encoding)
+            line = line if isinstance(line, str)\
+                        else str(line, encoding=self.encoding)
             if lineno <= 2:
                 m = re.search(r"%.*coding[:=]\s*([-\w\.]+)", line)
                 if m: self.encoding = m.group(1)

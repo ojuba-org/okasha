@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 import sys, os, os.path, time
 
-print 
+print() 
 
 try:
   from okasha.utils import ObjectsCache
@@ -15,42 +15,42 @@ except ImportError:
     from okasha.utils import ObjectsCache
 
 ch=ObjectsCache(lock=None, minCount=10, maxCount=100, maxTime=0)
-print "asserting empty start: ",
+print("asserting empty start: ", end=' ')
 assert(len(ch.objs)==0)
-print "OK"
+print("OK")
 
-print "asserting respecting minCount: ",
+print("asserting respecting minCount: ", end=' ')
 for i in range(10):
   ch.append(i,i)
   assert(len(ch.objs)==i+1)
-print "OK, after inserting 10 objects we have ", len(ch.objs), " cached"
+print("OK, after inserting 10 objects we have ", len(ch.objs), " cached")
 
-print "asserting getting least expected while below minCount: ",
+print("asserting getting least expected while below minCount: ", end=' ')
 ch=ObjectsCache(lock=None, minCount=10, maxCount=100, maxTime=0)
 for i in range(10):
   ch.append(i,100-3*i)
   for j in range(i+1):
     assert(ch.get(j)==100-3*j)
-print "OK"
+print("OK")
 
 
-print "asserting getting while below minCount: ",
+print("asserting getting while below minCount: ", end=' ')
 ch=ObjectsCache(lock=None, minCount=10, maxCount=100, maxTime=0)
 for i in range(10):
   ch.append(i,100-3*i)
   for j in range(i,-1,-1):
     assert(ch.get(j)==100-3*j)
-print "OK"
+print("OK")
 
-print "asserting below maxCount: ",
+print("asserting below maxCount: ", end=' ')
 ch=ObjectsCache(lock=None, minCount=10, maxCount=100, maxTime=0)
 for i in range(100):
   ch.append(i,3*i)
   for j in range(i+1):
     assert(ch.get(j)==3*j)
-print "OK"
+print("OK")
 
-print "asserting above maxCount (132 objs in 100 max): ",
+print("asserting above maxCount (132 objs in 100 max): ", end=' ')
 ch=ObjectsCache(lock=None, minCount=10, maxCount=100, maxTime=0)
 maxmissing=0
 for i in range(132):
@@ -64,12 +64,12 @@ for i in range(132):
     if v==None: missing+=1
   maxmissing=max(missing,maxmissing)
 assert(maxmissing<=32)
-print "OK, we are keeping ", len(ch.objs), " objects and the maximum missing=",maxmissing
+print("OK, we are keeping ", len(ch.objs), " objects and the maximum missing=",maxmissing)
 
 
 import random
 random.seed(time.time())
-print "random testing: "
+print("random testing: ")
 # insert 5 values then choose randomly between getting or inserting
 # when in getting mode, choose a random number of how many times to repeat getting the same id
 

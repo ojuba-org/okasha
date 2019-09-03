@@ -18,9 +18,9 @@ Copyright © 2009, Muayyad Alsadi <alsadi@ojuba.org>
 """
 import sys, os, os.path, threading
 from lxml import etree
-from utils import ObjectsCache # kid has its own cache
+from .utils import ObjectsCache # kid has its own cache
 
-from baseWebApp import fileNotFoundException
+from .baseWebApp import fileNotFoundException
 
 xsltCache=ObjectsCache(lock=threading.Lock())
 
@@ -41,7 +41,7 @@ def xsltTemplate(rq, o, bfn=None, **kw):
     trans = etree.XSLT(xslt_doc)
     xsltCache.append(fn, trans)
   # prepare object
-  if isinstance(o,basestring):
+  if isinstance(o,str):
     doc=etree.fromstring(o)
   else: doc=o
   r = trans(doc, **kw)

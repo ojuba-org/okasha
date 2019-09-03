@@ -169,14 +169,14 @@ You query is [<strong>%(q)s</strong>]<br/>
     """
       http://localhost:8080/xslt/some/args/?id=5
     """
-    return u'''<a><b>Text</b></a>'''
+    return '''<a><b>Text</b></a>'''
 
   @expose(xsltTemplate,["docbook.xsl"])
   def docbook(self, rq, *args):
     """
       http://localhost:8080/docbook/some/args/?id=5
     """
-    return u'''\
+    return '''\
 <article id="myarticle" lang="ar_JO">
   <section id="mysection1">
     <title>عنوان الفصل الأول</title>
@@ -207,11 +207,11 @@ You query is [<strong>%(q)s</strong>]<br/>
     """
       http://localhost:8080/cookies/
     """
-    if rq.q.has_key('color'):
+    if 'color' in rq.q:
       c=rq.q.getfirst('color','')
       rq.response.setCookie('color',c, 60*5) # expires in 5 minutes
       return {'color':c}
-    if rq.cookies.has_key('color'):
+    if 'color' in rq.cookies:
       return {'color':rq.cookies['color'].value.decode('utf8')}
     return {'color':''}
 
@@ -222,7 +222,7 @@ You query is [<strong>%(q)s</strong>]<br/>
     """
     color=rq.q.getfirst('color','')
     b=rq.q.getfirst('b','')
-    if rq.q.has_key('file1'):
+    if 'file1' in rq.q:
       f=rq.q.getfirst('file1','') # get it as string
       rq.q.save_in('file1','/tmp/')
     else: f=""

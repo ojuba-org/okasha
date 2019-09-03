@@ -24,16 +24,16 @@ try: import json
 except ImportError:
   import simplejson as json
 
-import urlparse # for parsing query string
+import urllib.parse # for parsing query string
 from cgi import escape, FieldStorage # for html escaping
 from operator import attrgetter # for OkashaFields
-from Cookie import SimpleCookie # in python 3.0 it's from http.cookies import SimpleCookie
-from utils import fromFs, toFs, safeHash
+from http.cookies import SimpleCookie # in python 3.0 it's from http.cookies import SimpleCookie
+from .utils import fromFs, toFs, safeHash
 
 try:
-    from cStringIO import StringIO
+    from io import StringIO
 except ImportError:
-    from StringIO import StringIO
+    from io import StringIO
 
 #import urllib # to be used for quote and unquote
 
@@ -63,7 +63,7 @@ forbiddenException=lambda *a,**kw: webAppBaseException(403,*a,**kw)
 fileNotFoundException=lambda *a,**kw: webAppBaseException(404,*a,**kw)
 def redirectException(location,*a,**kw):
   e=webAppBaseException(302,*a,**kw)
-  if type(location)==unicode: l=location.encode('utf-8')
+  if type(location)==str: l=location.encode('utf-8')
   else: l=location
   e.kw['location']=l
   return e
@@ -98,7 +98,7 @@ print mydict.y
     self[k]=v
     return v
   def __delattr__(self, key):
-    if self.has_key(key): del self[key]
+    if key in self: del self[key]
     return super(dict, self).__delattr__(key)
 
 
@@ -110,8 +110,8 @@ class Response(OkDict):
     self.contentType=contentType
     self.headers=headers
     self.cookies=SimpleCookie('')
-    self.title=u''
-    self.meta_description=u''
+    self.title=''
+    self.meta_description=''
     self.meta_keywords=[]
     self.js_links={}
     self.css_links={}
@@ -123,8 +123,8 @@ class Response(OkDict):
     pos can be head, begin, end
     '''
     if not name: name=os.path.basename(js)
-    if not self.js_links.has_key(pos): self.js_links[pos]={}
-    if self.js_links[pos].has_key(name): return False
+    if pos not in self.js_links: self.js_links[pos]={}
+    if name in self.js_links[pos]: return False
     self.js_links[pos][name]=(weight, js)
     return True
 
@@ -134,45 +134,45 @@ class Response(OkDict):
     name is a way to avoid registering the same file twice
     '''
     if not name: name=os.path.basename(css)
-    if not self.css_links.has_key(media): self.css_links[media]={}
-    if self.css_links[media].has_key(name): return False
+    if media not in self.css_links: self.css_links[media]={}
+    if name in self.css_links[media]: return False
     self.css_links[media][name]=(weight, css)
     return True
 
   def render_css_links(self):
     r=[]
-    for media, v in self.css_links.items():
-      l=v.values()
+    for media, v in list(self.css_links.items()):
+      l=list(v.values())
       l.sort()
       for w,f in l:
-        r.append(u'<link rel="stylesheet" media="%s" type="text/css" href="%s%s/%s" />' % (
+        r.append('<link rel="stylesheet" media="%s" type="text/css" href="%s%s/%s" />' % (
           media, self.rq.script, self.rq.webapp._themePrefix, f,
           ))
-    return u'\n'.join(r)
+    return '\n'.join(r)
 
   def render_js_links(self, pos='head'):
-    if not self.js_links.has_key(pos): return ''
+    if pos not in self.js_links: return ''
     r=[]
-    l=self.js_links[pos].values()
+    l=list(self.js_links[pos].values())
     l.sort()
     for w,f in l:
-      r.append(u'<script type="text/javascript" src="%s%s/%s"></script>' % (
+      r.append('<script type="text/javascript" src="%s%s/%s"></script>' % (
         self.rq.script, self.rq.webapp._themePrefix, f,
         ))
-    return u'\n'.join(r)
+    return '\n'.join(r)
 
   def setCookie(self, key, value, t=None, path=None, domain=None, comment=None):
     """
     sets or replace a cookies with key and value, and sets its expire time in seconds since now (if given) 
     """
-    if isinstance(value,unicode): value=value.encode('utf8')
+    if isinstance(value,str): value=value.encode('utf8')
     self.cookies[key]=value
     if t!=None:
       # TODO: is this the right way of setting both expires and max-age
       self.cookies[key]['expires']=time.strftime("%a, %d %b %Y %H:%M:%S UTC", time.gmtime(time.time()+t))
       if t>0: self.cookies[key]['max-age']=t
     if path==None: path=self.rq.script+'/'
-    if isinstance(path,unicode): path=path.encode('utf8')
+    if isinstance(path,str): path=path.encode('utf8')
     self.cookies[key]['path']=path
     if domain!=None:  self.cookies[key]['domain']=domain
     if comment!=None:  self.cookies[key]['comment']=comment
@@ -272,7 +272,7 @@ class Request:
     self.response=Response(self)
     # FIXME: find a way to simplify decoding query strings into unicode
     qs=environ.get('QUERY_STRING','')
-    if environ.has_key('wsgi.input'):
+    if 'wsgi.input' in environ:
       self.q=OkashaFields(fp=environ['wsgi.input'],environ=environ)
     else: self.q=OkashaFields(fp=StringIO(''),environ=environ)
 
@@ -281,7 +281,7 @@ class Request:
 
     self.uri=environ['PATH_INFO'] # can be / or /view 
     
-    if type(self.uri)!=unicode:
+    if type(self.uri)!=str:
       try: self.uri=self.uri.decode('utf8')
       except UnicodeDecodeError: 
         webapp._logger.warning('unable to decode uri=[%s]' % self.uri.__repr__())
@@ -289,7 +289,7 @@ class Request:
     if not self.uri: self.uriList=[]; return
     if self.uri.endswith('/'): self.tailingSlash=True
     else: self.tailingSlash=False
-    if self.uri.startswith('/'): self.uriList=self.uri[1:].split(u'/')
+    if self.uri.startswith('/'): self.uriList=self.uri[1:].split('/')
     else: self.uriList=self.uri.split('/') # NOTE: this should never happen
     if self.uriList and self.uriList[-1]=='': self.uriList.pop()
     
@@ -334,11 +334,11 @@ class expose:
       if rq.response.headers==None: rq.response.headers=self._headers
       rs=webAppResponses.get(rq.response.code,"%d Unknown code" % rq.response.code)
       cookies=rq.response.cookies.output(header="")
-      if cookies: h=map(lambda c: ('Set-Cookie',c),cookies.split('\n'))
+      if cookies: h=[('Set-Cookie',c) for c in cookies.split('\n')]
       else: h=[]
-      rq.start_response(rs, [('content-type', rq.response.contentType)]+h+map(lambda k: (k,rq.response.headers[k]),rq.response.headers))
-      if type(r)==unicode: return (r.encode('utf8'),)
-      elif isinstance(r, basestring): return (r,)
+      rq.start_response(rs, [('content-type', rq.response.contentType)]+h+[(k,rq.response.headers[k]) for k in rq.response.headers])
+      if type(r)==str: return (r.encode('utf8'),)
+      elif isinstance(r, str): return (r,)
       return r
     return wrapper
 
@@ -395,7 +395,7 @@ class fakeLogger:
 
 def parse_theme(theme_d):
   r={}
-  fn=os.path.join(theme_d, u"theme.txt")
+  fn=os.path.join(theme_d, "theme.txt")
   if not os.path.exists(fn): return {}
   try:
     f=open(fn)
@@ -454,8 +454,8 @@ class baseWebApp:
     self._theme_lookup=theme_lookup
     themesDir=get_theme_dirs(theme_lookup, theme)
     if not hasattr(themesDir, '__iter__'): themesDir=[themesDir]
-    self._themesDir=map(os.path.abspath, themesDir)
-    self._templatesDir=map(lambda s: s+'/templates/', themesDir)
+    self._themesDir=list(map(os.path.abspath, themesDir))
+    self._templatesDir=[s+'/templates/' for s in themesDir]
     # TODO: add a self._staticFilesCache
     self._staticBaseDir={}
     self._themePrefix=themePrefix
@@ -471,10 +471,10 @@ class baseWebApp:
     self._redirectBaseUrls={}
     for k in redirectBaseUrls:
       self._redirectBaseUrls[self._tailingSlash(k)]=self._tailingSlash(redirectBaseUrls[k])
-    self._staticBaseDirKeys=self._staticBaseDir.keys()
+    self._staticBaseDirKeys=list(self._staticBaseDir.keys())
     self._staticBaseDirKeys.sort()
     self._staticBaseDirKeys.reverse() # so it's from longer to shorter
-    self._redirectBaseUrlsKeys=self._redirectBaseUrls.keys()
+    self._redirectBaseUrlsKeys=list(self._redirectBaseUrls.keys())
     self._redirectBaseUrlsKeys.sort()
     self._redirectBaseUrlsKeys.reverse()
 
@@ -513,7 +513,7 @@ class baseWebApp:
   def _302(self, rq, e):
     rs=webAppResponses[302]
     cookies=rq.response.cookies.output(header="")
-    if cookies: h=map(lambda c: ('Set-Cookie',c),cookies.split('\n'))
+    if cookies: h=[('Set-Cookie',c) for c in cookies.split('\n')]
     else: h=[]
     rq.start_response(rs, [
       ('content-type', 'text/plain'),

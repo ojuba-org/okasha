@@ -18,11 +18,11 @@ Copyright © 2009, Muayyad Alsadi <alsadi@ojuba.org>
 """
 import sys, time, hashlib, random
 import bisect
-from itertools import groupby,imap
+from itertools import groupby
 import re
 
 fs_encoding=sys.getfilesystemencoding().startswith('ANSI') and 'UTF-8' or sys.getfilesystemencoding()
-dD_re=re.compile(ur'(\d+|\D+)')
+dD_re=re.compile(r'(\d+|\D+)')
 
 def stringOrFloat(s):
   try: return float(s)
@@ -47,7 +47,7 @@ def fromFs(filenameblob):
   """
   recives a blob encoded in filesystem encoding and convert it into a unicode object
   """
-  if type(filenameblob)!=unicode:
+  if type(filenameblob)!=str:
     return filenameblob.decode(fs_encoding)
   return filenameblob
 
@@ -55,20 +55,20 @@ def toFs(filename):
   """
   recives a unicode object and encode it into filesystem encoding
   """
-  if type(filename)==unicode:
+  if type(filename)==str:
     return filename.encode(fs_encoding)
   return filename
 
 
 def randomblob(m,M):
-  return ''.join(map(lambda i: chr(random.randrange(0,255)), range(random.randrange(m,M))))
+  return ''.join([chr(random.randrange(0,255)) for i in range(random.randrange(m,M))])
 
 
 def safeHash(stringSeed, o):
   """
   a URL safe hash, it results a 22 byte long string hash based on md5sum
   """
-  if isinstance(o,unicode): o=o.encode('utf8')
+  if isinstance(o,str): o=o.encode('utf8')
   return hashlib.md5(stringSeed+o).digest().encode('base64').replace('+','-').replace('/','_')[:22]
 
 # TODO: is this needed by anything ?
@@ -76,13 +76,13 @@ def unixUniq(l):
   """
   Unix-like uniq, the iteratable argument should be sorted first to get unique elements.
   """
-  return imap(lambda j:j[0],groupby(l,lambda i: i))
+  return map(lambda j:j[0],groupby(l,lambda i: i))
 
 def unixUniqAndCount(l):
   """
   Unix-like uniq -c, it returns an iteratable of tuples (count, uniq_entry)
   """
-  return imap(lambda j:(len(list(j[1])),j[0]),groupby(l,lambda i: i))
+  return map(lambda j:(len(list(j[1])),j[0]),groupby(l,lambda i: i))
 
 class ObjectsCacheObject:
   def __init__(self, objId, obj):
@@ -198,7 +198,7 @@ class ObjectsCache:
   def append(self, objId, obj):
     self._lock.acquire()
     try:
-      if self._hash.has_key(objId):
+      if objId in self._hash:
         # replace it
         self._get(objId) # this will make it last object
         # remove it

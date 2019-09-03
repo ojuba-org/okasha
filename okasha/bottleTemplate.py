@@ -20,8 +20,8 @@ for details and sytax visit http://bottle.paws.de/docs/dev/stpl.html
 """
 
 import sys, os, os.path
-from baseWebApp import fileNotFoundException
-from bottleTemplateSegment import SimpleTemplate, TemplateError
+from .baseWebApp import fileNotFoundException
+from .bottleTemplateSegment import SimpleTemplate, TemplateError
 
 class bottleTemplate(object):
   def __init__(self, *a, **kw):
