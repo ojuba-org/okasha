@@ -5,14 +5,13 @@
 Name: python-okasha
 Summary: WSGI web framework for python
 URL: http://ojuba.org
-Version: 0.2.4
-Release: 3%{?dist}
+Version: 0.3.0
+Release: 1%{?dist}
 Source0: https://github.com/%{owner}/%{sname}/archive/%{commit}/%{sname}-%{commit}.tar.gz
 License: WAQFv2
 Group: System Environment/Base
 BuildArch: noarch
-BuildRequires: python2-devel
-BuildRequires: perl
+BuildRequires: python3-devel
 
 %description
 Almost do-nothing web framewrok that features:
@@ -31,19 +30,10 @@ Requires: python-lxml
 %description xslt
 Adds support for xslt-based templates using python's lxml package
 
-%package kid
-Summary:  kid templates and support for okasha framework
-Group: System Environment/Base
-Requires: %{name}
-Requires: python-kid
-
-%description kid
-Adds support for kid-based templates using python's kid package
 
 %package docs
 Summary:  documentation for okasha the trivial WSGI web framework for python
 Group: System Environment/Base
-Requires: python-okasha-kid
 Requires: python-okasha-xslt
 Requires: python-paste
 
@@ -59,7 +49,7 @@ bash ./update-from-site.sh
 popd
 
 %install
-%{__python2} setup.py install \
+%{__python3} setup.py install \
         --root=$RPM_BUILD_ROOT \
         --optimize=2
 
@@ -71,23 +61,24 @@ cp -a docs/* $RPM_BUILD_ROOT/%{_datadir}/doc/%{name}-docs/
 %files
 %defattr(-,root,root,-)
 %doc waqf2-ar.pdf README README.ar.txt TODO
-%{python2_sitelib}/%{sname}/__init__.py*
-%{python2_sitelib}/%{sname}/baseWebApp.py*
-%{python2_sitelib}/%{sname}/bottleTemplate.py*
-%{python2_sitelib}/%{sname}/bottleTemplateSegment.py*
-%{python2_sitelib}/%{sname}/utils.py*
-%{python2_sitelib}/*.egg-info
+%{python3_sitelib}/%{sname}/__init__.py*
+%{python3_sitelib}/%{sname}/baseWebApp.py*
+%{python3_sitelib}/%{sname}/bottleTemplate.py*
+%{python3_sitelib}/%{sname}/bottleTemplateSegment.py*
+%{python3_sitelib}/%{sname}/utils.py*
+%{python3_sitelib}/*.egg-info
+%{python3_sitelib}/%{sname}/__pycache__/*.py*
 
 %files xslt
-%{python2_sitelib}/%{sname}/kidTemplate.py*
-
-%files kid
-%{python2_sitelib}/%{sname}/xsltTemplate.py*
+%{python3_sitelib}/%{sname}/xsltTemplate.*
 
 %files docs
 %{_datadir}/doc/%{name}-docs/
 
 %changelog
+* Sun Sep 26 2021 Ehab El-Gedawy <ehabsas@gmail.com> - 0.3.0-1
+- Port to python 3.
+
 * Sat Feb 15 2014 Mosaab Alzoubi <moceap@hotmail.com> - 0.2.4-3
 - General Fixes.
 

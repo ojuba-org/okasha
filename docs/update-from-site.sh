@@ -1,4 +1,5 @@
 #! /bin/bash
+exit 0
 baseurl="http://www.ojuba.org/wiki/_export/xhtml/okasha/"
 for i in "" deployment sample1 templates elixir
 do

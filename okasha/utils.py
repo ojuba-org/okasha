@@ -76,13 +76,13 @@ def unixUniq(l):
   """
   Unix-like uniq, the iteratable argument should be sorted first to get unique elements.
   """
-  return map(lambda j:j[0],groupby(l,lambda i: i))
+  return [j[0] for j in groupby(l,lambda i: i)]
 
 def unixUniqAndCount(l):
   """
   Unix-like uniq -c, it returns an iteratable of tuples (count, uniq_entry)
   """
-  return map(lambda j:(len(list(j[1])),j[0]),groupby(l,lambda i: i))
+  return [(len(list(j[1])),j[0]) for j in groupby(l,lambda i: i)]
 
 class ObjectsCacheObject:
   def __init__(self, objId, obj):

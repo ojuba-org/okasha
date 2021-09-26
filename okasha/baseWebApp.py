@@ -25,7 +25,8 @@ except ImportError:
   import simplejson as json
 
 import urllib.parse # for parsing query string
-from cgi import escape, FieldStorage # for html escaping
+from cgi import FieldStorage # for html escaping
+from html import escape # for html escaping
 from operator import attrgetter # for OkashaFields
 from http.cookies import SimpleCookie # in python 3.0 it's from http.cookies import SimpleCookie
 from .utils import fromFs, toFs, safeHash

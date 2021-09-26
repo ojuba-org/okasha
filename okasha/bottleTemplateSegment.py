@@ -27,7 +27,7 @@ Licence (MIT)
 """
 
 import sys, os, os.path, tokenize, functools, re
-from cgi import escape
+from html import escape
 from .baseWebApp import webAppBaseException
 
 #########################
